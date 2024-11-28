@@ -14,22 +14,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import useForget from "@/hooks/auth/useForget";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  store: z
-    .string()
-    .min(2, {
-      message: "Nama toko harus lebih dari 2 karakter.",
-    })
-    .max(25, {
-      message: "Nama toko harus kurang dari 25 karakter.",
-    }),
-  fullname: z.string().min(2, {
-    message: "Nama lengkap harus lebih dari 6 karakter.",
+  store: z.string().min(1, {
+    message: "Nama Toko tidak boleh kosong.",
+  }),
+
+  fullname: z.string().min(1, {
+    message: "Nama lengkap tidak boleh kosong.",
   }),
   newPassword: z
     .string()
-    .min(2, {
+    .min(6, {
       message: "Password harus lebih dari 6 karakter.",
     })
     .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, {
@@ -46,14 +47,35 @@ const ForgetPasswordView = () => {
       newPassword: "",
     },
   });
+  const router = useRouter();
+  const [notExist, setNotExist] = useState(false);
+
+  const { mutate, isPending } = useForget({
+    onSuccess: () => {
+      toast.success("Password berhasil diubah.");
+      form.reset();
+      setNotExist(false);
+      router.push("/login");
+    },
+    onError: () => {
+      setNotExist(true);
+    },
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
+        {notExist && (
+          <Alert variant="destructive">
+            <AlertDescription className="text-center">
+              Akun tidak terdaftar
+            </AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="store"
@@ -98,7 +120,11 @@ const ForgetPasswordView = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" style={{ marginTop: "2rem" }}>
+        <Button
+          type="submit"
+          disabled={isPending}
+          style={{ marginTop: "2rem" }}
+        >
           Ganti Password
         </Button>
       </form>

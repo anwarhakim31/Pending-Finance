@@ -14,6 +14,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AxiosError } from "axios";
+import useRegister from "@/hooks/auth/useRegister";
+import { User } from "@/types/model";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   store: z
@@ -46,9 +51,33 @@ export function RegisterView() {
       password: "",
     },
   });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  const { mutate, isPending } = useRegister({
+    onSuccess: async (data: User) => {
+      form.reset();
+      const res = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+
+      if (res?.ok) {
+        router.push(callbackUrl);
+      }
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError && error.response) {
+        form.setError("fullname", {
+          message: error?.response?.data?.message,
+        });
+      }
+    },
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (
@@ -98,7 +127,11 @@ export function RegisterView() {
             </FormItem>
           )}
         />
-        <Button type="submit" style={{ marginTop: "2rem" }}>
+        <Button
+          type="submit"
+          disabled={isPending}
+          style={{ marginTop: "2rem" }}
+        >
           Daftar
         </Button>
       </form>

@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { signIn } from "next-auth/react";
+
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   fullname: z.string().min(1, {
@@ -36,10 +39,22 @@ const LoginView = () => {
     },
   });
   const [notMatch, setNotMatch] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    console.log(setNotMatch);
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const res = await signIn("credentials", {
+      ...values,
+      redirect: false,
+    });
+
+    if (!res?.ok) {
+      return setNotMatch(true);
+    }
+
+    router.push(callbackUrl);
   }
 
   return (
