@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,6 +17,7 @@ import useRegister from "@/hooks/auth/useRegister";
 import { User } from "@/types/model";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LoadingButton } from "@/components/ui/LoadingButton";
 
 const formSchema = z.object({
   store: z
@@ -127,13 +126,13 @@ export function RegisterView() {
             </FormItem>
           )}
         />
-        <Button
+        <LoadingButton
           type="submit"
-          disabled={isPending}
+          loading={isPending}
           style={{ marginTop: "2rem" }}
         >
           Daftar
-        </Button>
+        </LoadingButton>
       </form>
     </Form>
   );

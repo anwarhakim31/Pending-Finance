@@ -1,0 +1,198 @@
+"use client";
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
+import { useForm } from "react-hook-form";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { LoadingButton } from "@/components/ui/LoadingButton";
+import { InputCurrcency } from "@/components/ui/InputCurrency";
+import { Edit2 } from "lucide-react";
+import { Products } from "@/types/model";
+
+export function ModalEditProduct({ data }: { data: Products }) {
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:border-blue-500 dark:border-gray-600">
+            <Edit2 size={14} className="text-blue-700" />
+          </button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Barang</DialogTitle>
+          </DialogHeader>
+          <ProfileForm data={data} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:bg-violet-100">
+          <Edit2 size={14} className="text-gray-700" />
+        </button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <DrawerTitle>Edit Barang</DrawerTitle>
+        </DrawerHeader>
+        <ProfileForm className="px-4" data={data} />
+        <DrawerFooter className="pt-2">
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+function ProfileForm({
+  className,
+  data,
+}: {
+  className?: string;
+  data: Products;
+}) {
+  const form = useForm<{
+    name: string;
+    price: number;
+    discountPrice: number | undefined;
+    discountQuantity: number | undefined;
+  }>({
+    defaultValues: {
+      name: data.name || "",
+      price: data.price || 0,
+      discountPrice: data.discountPrice || undefined,
+      discountQuantity: data.discountQuantity || undefined,
+    },
+  });
+
+  const onSubmit = (data: Products) => console.log(data);
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-4", className)}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          rules={{ required: "Nama barang tidak boleh kosong." }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nama Barang</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} autoComplete="off" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="price"
+          rules={{ required: "Harga Satuan tidak boleh kosong." }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Harga Satuan</FormLabel>
+              <FormControl>
+                <InputCurrcency
+                  placeholder=""
+                  {...field}
+                  type="number"
+                  min={0}
+                  step={1000}
+                  autoComplete="off"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div>
+          <span className="text-xs text-muted-foreground  block">Opsional</span>
+          <div className="flex gap-2">
+            <FormField
+              control={form.control}
+              rules={{ required: "Harga Satuan tidak boleh kosong." }}
+              name="discountPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Harga Diskon</FormLabel>
+                  <FormControl>
+                    <InputCurrcency
+                      placeholder=""
+                      {...field}
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="discountQuantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Jumlah Diskon Barang</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder=""
+                      {...field}
+                      type="number"
+                      min={0}
+                      step={1000}
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <LoadingButton style={{ marginTop: "2rem" }} type="submit">
+          Simpan
+        </LoadingButton>
+      </form>
+    </Form>
+  );
+}

@@ -4,3 +4,11 @@ export interface User {
   photo?: string;
   store: string;
 }
+
+export interface Products {
+  id?: string;
+  name: string;
+  price: number;
+  discountPrice?: number;
+  discountQuantity?: number;
+}
