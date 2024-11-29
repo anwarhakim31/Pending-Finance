@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -21,6 +20,7 @@ import { signIn } from "next-auth/react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
+import { LoadingButton } from "@/components/ui/LoadingButton";
 
 const formSchema = z.object({
   fullname: z.string().min(1, {
@@ -117,13 +117,13 @@ const LoginView = () => {
           Lupa Password
         </Link>
 
-        <Button
+        <LoadingButton
           type="submit"
-          disabled={isLoading}
+          loading={isLoading}
           style={{ marginTop: "2rem" }}
         >
           Masuk
-        </Button>
+        </LoadingButton>
       </form>
     </Form>
   );

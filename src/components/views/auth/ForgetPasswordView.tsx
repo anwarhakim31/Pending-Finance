@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,6 +17,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import useForget from "@/hooks/auth/useForget";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { LoadingButton } from "@/components/ui/LoadingButton";
 
 const formSchema = z.object({
   store: z.string().min(1, {
@@ -120,13 +119,13 @@ const ForgetPasswordView = () => {
             </FormItem>
           )}
         />
-        <Button
+        <LoadingButton
           type="submit"
-          disabled={isPending}
+          loading={isPending}
           style={{ marginTop: "2rem" }}
         >
           Ganti Password
-        </Button>
+        </LoadingButton>
       </form>
     </Form>
   );
