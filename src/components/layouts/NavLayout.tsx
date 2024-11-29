@@ -14,7 +14,7 @@ const NavLayout = () => {
       path: "/dashboard",
       logo: (
         <LayoutDashboard
-          size={28}
+          size={24}
           strokeWidth={1}
           className={`text-gray-700 ${
             pathname === "/dashboard" ? "fill-violet-700 text-violet-400" : ""
@@ -27,7 +27,7 @@ const NavLayout = () => {
       path: "/products",
       logo: (
         <BoxIcon
-          size={28}
+          size={24}
           strokeWidth={1}
           className={`text-gray-700 ${
             pathname === "/products" ? "fill-violet-700 text-violet-400" : ""
@@ -40,7 +40,7 @@ const NavLayout = () => {
       path: "/history",
       logo: (
         <History
-          size={28}
+          size={24}
           strokeWidth={1}
           className={`text-gray-700 ${
             pathname === "/history" ? "fill-violet-700 text-violet-400" : ""
@@ -51,8 +51,8 @@ const NavLayout = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 w-full  bg-white border overflow-hidden border-gray-200 sm:w-20 sm:top-0 ">
-      <nav className="container flex justify-center items-center sm:flex-col sm:mt-16">
+    <div className="fixed bottom-0 left-0 w-full  bg-white border overflow-hidden border-gray-200 md:w-20 md:top-0 ">
+      <nav className="container flex justify-center items-center md:flex-col md:mt-16">
         {list.map((item) => (
           <Link
             key={item.title}
