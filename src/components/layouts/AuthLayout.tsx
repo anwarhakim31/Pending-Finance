@@ -1,19 +1,17 @@
 "use client";
-import { CoinsIcon } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import Logo from "../ui/logo";
 
 const Authlayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center ">
-      <div className="flex items-center mb-4 gap-2">
-        <CoinsIcon strokeWidth={1.5} className="text-violet-700" />
-        <h1 className="text-2xl font-medium text-violet-700 ">Pending</h1>
-      </div>
-      <div className="w-full max-w-[400px] bg-white lg:shadow-[0_0.2rem_0.3rem_rgba(0,0,0,0.2)] p-8 rounded-md">
+      <Logo />
+      <div className="w-full max-w-[400px] mt-4 bg-white lg:shadow-[0_0.2rem_0.3rem_rgba(0,0,0,0.2)] p-8 rounded-md">
         <h3 className="text-md font-medium ">Selamat Datang</h3>
         <small className="text-xs text-muted-foreground mb-4 block">
           {pathname === "/login"

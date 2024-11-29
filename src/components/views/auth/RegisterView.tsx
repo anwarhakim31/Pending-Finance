@@ -57,13 +57,13 @@ export function RegisterView() {
 
   const { mutate, isPending } = useRegister({
     onSuccess: async (data: User) => {
-      form.reset();
       const res = await signIn("credentials", {
         ...data,
         redirect: false,
       });
 
       if (res?.ok) {
+        form.reset();
         router.push(callbackUrl);
       }
     },

@@ -1,20 +1,13 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
-import React from "react";
+import HeaderLayout from "@/components/layouts/HeaderLayout";
+import NavLayout from "@/components/layouts/NavLayout";
 
 const DashboardPage = () => {
   return (
-    <Button
-      variant="destructive"
-      onClick={() =>
-        signOut({
-          callbackUrl: "/login",
-        })
-      }
-    >
-      Log out
-    </Button>
+    <>
+      <HeaderLayout />
+      <h1>Dashboard</h1>
+      <NavLayout />
+    </>
   );
 };
 

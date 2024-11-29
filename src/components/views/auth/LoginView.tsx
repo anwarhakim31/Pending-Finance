@@ -20,6 +20,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { signIn } from "next-auth/react";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { AxiosError } from "axios";
 
 const formSchema = z.object({
   fullname: z.string().min(1, {
@@ -39,22 +40,31 @@ const LoginView = () => {
     },
   });
   const [notMatch, setNotMatch] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const res = await signIn("credentials", {
-      ...values,
-      redirect: false,
-    });
+    setIsLoading(true);
+    try {
+      const res = await signIn("credentials", {
+        ...values,
+        redirect: false,
+      });
 
-    if (!res?.ok) {
-      return setNotMatch(true);
+      if (!res?.ok) {
+        setNotMatch(true);
+        setIsLoading(false);
+        return;
+      }
+      router.push(callbackUrl);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setIsLoading(false);
+      }
     }
-
-    router.push(callbackUrl);
   }
 
   return (
@@ -107,7 +117,11 @@ const LoginView = () => {
           Lupa Password
         </Link>
 
-        <Button type="submit" style={{ marginTop: "2rem" }}>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          style={{ marginTop: "2rem" }}
+        >
           Masuk
         </Button>
       </form>
