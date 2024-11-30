@@ -36,6 +36,10 @@ import { LoadingButton } from "@/components/ui/LoadingButton";
 import { InputCurrcency } from "@/components/ui/InputCurrency";
 import { Edit2 } from "lucide-react";
 import { Products } from "@/types/model";
+import useUpdateProduct from "@/hooks/product/useUpdateProduct";
+import { useQueryClient } from "@tanstack/react-query";
+import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
+import { toast } from "sonner";
 
 export function ModalEditProduct({ data }: { data: Products }) {
   const [open, setOpen] = React.useState(false);
@@ -53,7 +57,7 @@ export function ModalEditProduct({ data }: { data: Products }) {
           <DialogHeader>
             <DialogTitle>Edit Barang</DialogTitle>
           </DialogHeader>
-          <ProfileForm data={data} />
+          <ProfileForm data={data} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -62,15 +66,15 @@ export function ModalEditProduct({ data }: { data: Products }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:bg-violet-100">
-          <Edit2 size={14} className="text-gray-700" />
+        <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:border-blue-500 dark:border-gray-600">
+          <Edit2 size={14} className="text-blue-700" />
         </button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit Barang</DrawerTitle>
         </DrawerHeader>
-        <ProfileForm className="px-4" data={data} />
+        <ProfileForm className="px-4" data={data} setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -84,9 +88,11 @@ export function ModalEditProduct({ data }: { data: Products }) {
 function ProfileForm({
   className,
   data,
+  setOpen,
 }: {
   className?: string;
   data: Products;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<{
     name: string;
@@ -101,8 +107,33 @@ function ProfileForm({
       discountQuantity: data.discountQuantity || undefined,
     },
   });
+  const query = useQueryClient();
+  const { mutate, isPending } = useUpdateProduct(data.id?.toString() || "");
 
-  const onSubmit = (data: Products) => console.log(data);
+  const onSubmit = (data: Products) => {
+    if (form.watch("discountPrice") && !form.watch("discountQuantity")) {
+      return form.setError("discountQuantity", {
+        message: "Jumlah  tidak boleh kosong.",
+      });
+    }
+
+    if (form.watch("discountQuantity") && !form.watch("discountPrice")) {
+      return form.setError("discountPrice", {
+        message: "Harga tidak boleh kosong.",
+      });
+    }
+
+    mutate(data, {
+      onSuccess: (data) => {
+        toast.success(data.message);
+        query.invalidateQueries({ queryKey: ["products"] });
+        setOpen(false);
+      },
+      onError: (error) => {
+        ResponseErrorAxios(error);
+      },
+    });
+  };
 
   return (
     <Form {...form}>
@@ -160,6 +191,7 @@ function ProfileForm({
                       placeholder=""
                       {...field}
                       autoComplete="off"
+                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
@@ -178,7 +210,6 @@ function ProfileForm({
                       {...field}
                       type="number"
                       min={0}
-                      step={1000}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -189,7 +220,11 @@ function ProfileForm({
           </div>
         </div>
 
-        <LoadingButton style={{ marginTop: "2rem" }} type="submit">
+        <LoadingButton
+          loading={isPending}
+          style={{ marginTop: "2rem" }}
+          type="submit"
+        >
           Simpan
         </LoadingButton>
       </form>

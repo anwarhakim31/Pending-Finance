@@ -34,8 +34,13 @@ import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/LoadingButton";
 import { InputCurrcency } from "@/components/ui/InputCurrency";
 import { Products } from "@/types/model";
+import { useQueryClient } from "@tanstack/react-query";
 
-export function ModalAddProduct() {
+import { toast } from "sonner";
+import useCreateProduct from "@/hooks/product/useCreateProduct";
+import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
+
+export function ModalAddProduct({ isLoading }: { isLoading: boolean }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -43,7 +48,10 @@ export function ModalAddProduct() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <button className="text-xs ml-auto w-36 border border-gray-300 hover:bg-violet-100 transition-all duration-300 ease-in-out text-violet-700 py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-white">
+          <button
+            disabled={isLoading}
+            className="text-xs flex-shrink-0 disabled:cursor-not-allowed ml-auto w-36 border border-gray-300 hover:bg-violet-100 transition-all duration-300 ease-in-out text-violet-700 py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-white"
+          >
             Tambah Barang
           </button>
         </DialogTrigger>
@@ -51,7 +59,7 @@ export function ModalAddProduct() {
           <DialogHeader>
             <DialogTitle>Tambah Barang</DialogTitle>
           </DialogHeader>
-          <ProfileForm />
+          <ProfileForm setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -60,7 +68,10 @@ export function ModalAddProduct() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <button className="text-xs ml-auto w-36 bg-gray-100 border border-gray-300 hover:bg-violet-100 transition-all duration-300 ease-in-out text-violet-700 py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 ">
+        <button
+          disabled={isLoading}
+          className="text-xs flex-shrink-0 disabled:cursor-not-allowed disabled:hover:bg-white ml-auto w-36 border border-gray-300 hover:bg-violet-100 transition-all duration-300 ease-in-out text-violet-700 py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-white"
+        >
           Tambah Barang
         </button>
       </DrawerTrigger>
@@ -68,7 +79,7 @@ export function ModalAddProduct() {
         <DrawerHeader className="text-left">
           <DrawerTitle>Tambah Barang</DrawerTitle>
         </DrawerHeader>
-        <ProfileForm className="px-4" />
+        <ProfileForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>
@@ -79,7 +90,13 @@ export function ModalAddProduct() {
   );
 }
 
-function ProfileForm({ className }: React.ComponentProps<"form">) {
+function ProfileForm({
+  className,
+  setOpen,
+}: {
+  className?: string;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const form = useForm<{
     name: string;
     price: number;
@@ -93,8 +110,33 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
       discountQuantity: undefined,
     },
   });
+  const query = useQueryClient();
+  const { isPending, mutate } = useCreateProduct();
 
-  const onSubmit = (data: Products) => console.log(data);
+  const onSubmit = (data: Products) => {
+    if (form.watch("discountPrice") && !form.watch("discountQuantity")) {
+      return form.setError("discountQuantity", {
+        message: "Jumlah  tidak boleh kosong.",
+      });
+    }
+
+    if (form.watch("discountQuantity") && !form.watch("discountPrice")) {
+      return form.setError("discountPrice", {
+        message: "Harga diskon tidak boleh kosong.",
+      });
+    }
+
+    mutate(data, {
+      onSuccess: (data) => {
+        setOpen(false);
+        query.invalidateQueries({ queryKey: ["products"] });
+        toast.success(data.message);
+      },
+      onError: (error) => {
+        ResponseErrorAxios(error);
+      },
+    });
+  };
 
   return (
     <Form {...form}>
@@ -110,7 +152,7 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
             <FormItem>
               <FormLabel>Nama Barang</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} autoComplete="off" />
+                <Input placeholder="Makanan" {...field} autoComplete="off" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -125,11 +167,10 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
               <FormLabel>Harga Satuan</FormLabel>
               <FormControl>
                 <InputCurrcency
-                  placeholder=""
+                  placeholder="1000"
                   {...field}
                   type="number"
                   min={0}
-                  step={1000}
                   autoComplete="off"
                 />
               </FormControl>
@@ -139,19 +180,20 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
         />
         <div>
           <span className="text-xs text-muted-foreground  block">Opsional</span>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full">
             <FormField
               control={form.control}
-              rules={{ required: "Harga Satuan tidak boleh kosong." }}
               name="discountPrice"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>Harga Diskon</FormLabel>
                   <FormControl>
                     <InputCurrcency
-                      placeholder=""
+                      type="number"
+                      placeholder="5000"
                       {...field}
                       autoComplete="off"
+                      min={0}
                     />
                   </FormControl>
                   <FormMessage />
@@ -162,15 +204,14 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
               control={form.control}
               name="discountQuantity"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>Jumlah Diskon Barang</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder=""
+                      placeholder="3"
                       {...field}
                       type="number"
                       min={0}
-                      step={1000}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -181,7 +222,11 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
           </div>
         </div>
 
-        <LoadingButton style={{ marginTop: "2rem" }} type="submit">
+        <LoadingButton
+          loading={isPending}
+          style={{ marginTop: "2rem" }}
+          type="submit"
+        >
           Simpan
         </LoadingButton>
       </form>

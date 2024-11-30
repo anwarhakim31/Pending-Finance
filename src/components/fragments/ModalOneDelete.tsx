@@ -9,10 +9,25 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import useDeleteOne from "@/hooks/useDeleteOne";
 
 import { Trash } from "lucide-react";
 
-export function ModalOneDelete() {
+export function ModalOneDelete({
+  id,
+  url,
+  keys,
+}: {
+  id: string;
+  url: string;
+  keys: string;
+}) {
+  const { mutate, isPending } = useDeleteOne(id, url, keys);
+
+  const handleDelete = () => {
+    mutate();
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -32,8 +47,10 @@ export function ModalOneDelete() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Batal</AlertDialogCancel>
-          <AlertDialogAction>Hapus</AlertDialogAction>
+          <AlertDialogCancel disabled={isPending}>Batal</AlertDialogCancel>
+          <AlertDialogAction disabled={isPending} onClick={handleDelete}>
+            Hapus
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
