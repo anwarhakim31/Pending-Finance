@@ -20,14 +20,15 @@ export async function POST(req: NextRequest) {
         return ResponseError("Produk tidak ditemukan", 400);
       }
 
-      const totalPrice = productDB.price * parseInt(quantity);
+      const totalPrice = BigInt(productDB.price) * BigInt(parseInt(quantity));
       const totalPriceDiscount =
         productDB.discountQuantity && productDB.discountPrice
-          ? (parseInt(quantity) % productDB.discountQuantity) *
+          ? BigInt(Number(parseInt(quantity) % productDB.discountQuantity)) *
+            BigInt(productDB.discountPrice) *
             productDB.discountPrice
           : 0;
       const total = productDB.discountPrice
-        ? totalPrice - totalPriceDiscount
+        ? totalPrice - BigInt(totalPriceDiscount)
         : totalPrice;
 
       const groupRecord = await prisma.groupRecord.create({

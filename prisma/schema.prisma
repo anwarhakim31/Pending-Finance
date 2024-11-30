@@ -21,8 +21,8 @@ model Products{
   id Int @id @default(autoincrement())
   name String @unique
   userId String 
-  price Int
-  discountPrice Int?
+  price BigInt
+  discountPrice BigInt?
   discountQuantity Int?
   createdAt DateTime @default(now())
 }
@@ -33,7 +33,7 @@ model Records {
   date      DateTime
   product   String?
   quantity  Int?
-  total     Int
+  total     BigInt
   createdAt DateTime    @default(now())
   group     GroupRecord? @relation(fields: [groupId], references: [id] ,onDelete: Cascade)
   groupId   String?

@@ -10,6 +10,17 @@ export async function POST(req: NextRequest) {
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
     if (token && typeof token === "object" && "id" in token) {
+      const nameIsExist = await prisma.products.findFirst({
+        where: {
+          name: name,
+          userId: token.id as string,
+        },
+      });
+
+      if (nameIsExist) {
+        return ResponseError("Nama barang sudah digunakan.", 400);
+      }
+
       const product = await prisma.products.create({
         data: {
           name: name,

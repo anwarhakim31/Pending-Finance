@@ -30,8 +30,11 @@ const HeaderLayout = () => {
         <Logo />
         <div className="flex items-center gap-4">
           <ThemeSwitcher />
-          <Link href="/profile">
-            <Avatar className="w-8 h-8 bg-gray-200">
+          <Link
+            href="/profile"
+            className=" rounded-full focus-within:outline-violet-700 focus-within:outline-2 "
+          >
+            <Avatar className="w-8 h-8 bg-gray-200 dark:bg-black ">
               <Image
                 src={"/user.png"}
                 alt="user"

@@ -40,6 +40,7 @@ import useUpdateProduct from "@/hooks/product/useUpdateProduct";
 import { useQueryClient } from "@tanstack/react-query";
 import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export function ModalEditProduct({ data }: { data: Products }) {
   const [open, setOpen] = React.useState(false);
@@ -130,7 +131,19 @@ function ProfileForm({
         setOpen(false);
       },
       onError: (error) => {
-        ResponseErrorAxios(error);
+        if (
+          error instanceof AxiosError &&
+          error.response &&
+          error.response.data.message
+        ) {
+          {
+            form.setError("name", {
+              message: error.response.data.message,
+            });
+          }
+        } else {
+          ResponseErrorAxios(error);
+        }
       },
     });
   };
