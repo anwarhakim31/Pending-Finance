@@ -61,7 +61,27 @@ export async function GET(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ status: 200, success: true, data: product });
+      const total = await prisma.products.count({
+        where: {
+          userId: token.id as string,
+          name: {
+            contains: search,
+          },
+        },
+      });
+
+      return NextResponse.json({
+        status: 200,
+        success: true,
+        data: product,
+        pagination: {
+          page: 1,
+          limit: 10,
+          total,
+          pages: Math.ceil(total / 10),
+        },
+        message: "Berhasil mengambil data barang.",
+      });
     }
 
     return NextResponse.json(

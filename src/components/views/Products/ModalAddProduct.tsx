@@ -179,7 +179,7 @@ function ProfileForm({
           )}
         />
         <div>
-          <span className="text-xs text-muted-foreground  block">Opsional</span>
+          <span className="text-xs text-gray-400  block">Opsional</span>
           <div className="flex gap-2 w-full">
             <FormField
               control={form.control}
