@@ -11,7 +11,7 @@ const HeaderLayout = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScroll(window.scrollY > 500 ? true : false);
+      setScroll(window.scrollY > 0 ? true : false);
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -21,12 +21,12 @@ const HeaderLayout = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full py-2 px-4  bg-white dark:bg-black ${
-        scroll ? "shadow-md" : ""
+      className={`fixed z-[1000] top-0 left-0 w-full   py-2  ${
+        scroll ? "shadow-md bg-white dark:bg-black " : ""
       }`}
       data-theme="light"
     >
-      <div className="container flex justify-between items-center">
+      <div className="container flex justify-between items-center px-3">
         <Logo />
         <div className="flex items-center gap-4">
           <ThemeSwitcher />

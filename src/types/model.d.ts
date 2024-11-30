@@ -12,3 +12,11 @@ export interface Products {
   discountPrice?: number;
   discountQuantity?: number;
 }
+
+export interface Record {
+  id?: string;
+  date: Date;
+  type?: string;
+  product?: string;
+  quantity?: number;
+}

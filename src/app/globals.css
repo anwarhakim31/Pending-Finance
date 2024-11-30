@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
+html,
+body,
+:root {
+  height: 100%;
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -113,4 +119,17 @@ body {
   100% {
     transform: translateY(0);
   }
+}
+
+.recharts-cartesian-axis-tick text {
+  fill: whitesmoke !important;
+  font-size: 10px !important;
+}
+
+.recharts-xAxis {
+  padding-inline: 2rem !important;
+}
+
+body[data-scroll-locked] {
+  min-width: 100%;
 }

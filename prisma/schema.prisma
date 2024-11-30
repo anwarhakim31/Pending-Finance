@@ -19,10 +19,29 @@ model User {
 
 model Products{
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
   userId String 
   price Int
   discountPrice Int?
   discountQuantity Int?
   createdAt DateTime @default(now())
+}
+model Records {
+  id        String      @id @default(cuid())
+  userId    String
+  type      String
+  date      DateTime
+  product   String?
+  quantity  Int?
+  total     Int
+  createdAt DateTime    @default(now())
+  group     GroupRecord? @relation(fields: [groupId], references: [id] ,onDelete: Cascade)
+  groupId   String?
+}
+
+model GroupRecord {
+  id        String       @id @default(cuid())
+  date      DateTime
+  records   Records[]
+  userId    String   
 }
