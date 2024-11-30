@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Logo from "../ui/logo";
 import { Avatar } from "../ui/avatar";
 import Image from "next/image";
@@ -6,9 +7,23 @@ import Link from "next/link";
 import { ThemeSwitcher } from "../ui/theme-switcher";
 
 const HeaderLayout = () => {
+  const [scroll, setScroll] = React.useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScroll(window.scrollY > 500 ? true : false);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <header
-      className=" fixed top-0 left-0 w-full py-2 px-4  bg-white dark:bg-black border-b border-gray-0"
+      className={`fixed top-0 left-0 w-full py-2 px-4  bg-white dark:bg-black ${
+        scroll ? "shadow-md" : ""
+      }`}
       data-theme="light"
     >
       <div className="container flex justify-between items-center">

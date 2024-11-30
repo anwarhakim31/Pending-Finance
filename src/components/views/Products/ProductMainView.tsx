@@ -1,18 +1,24 @@
 "use client";
 import InputSearch from "@/components/ui/InputSearch";
-import { formatCurrency } from "@/components/utils/helpers";
 import { motion as m } from "framer-motion";
 
 import React from "react";
 import { ModalAddProduct } from "./ModalAddProduct";
-import { ModalEditProduct } from "./ModalEditProduct";
-import { ModalOneDelete } from "@/components/fragments/ModalOneDelete";
+import useFetchProduct from "@/hooks/product/useFetchProduct";
+import { Products } from "@/types/model";
+import ProductCardList from "@/components/views/Products/ProductCardList";
+import { FileQuestion } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import Loader from "@/components/ui/Loader";
+const circlePath = {
+  x: [0, 200, 0, 100, 0, 200, 0, 300, 0],
+  y: [0, 0, -100, -50, 0, 50, 250, 200, 0],
+};
 
 const ProductMainView = () => {
-  const circlePath = {
-    x: [0, 200, 0, 100, 0, 200, 0, 300, 0],
-    y: [0, 0, -100, -50, 0, 50, 250, 200, 0],
-  };
+  const searchParams = useSearchParams();
+  const { data, isPending } = useFetchProduct(searchParams);
+
   return (
     <main className="container pt-[4.5rem] pb-12 px-4 sm:pb-0">
       <div className="relative overflow-hidden w-full h-24 bg-gradient-to-tr rounded-lg flex-center flex-col from-purple-700 p-4  via-violet-500 to-violet-400">
@@ -32,35 +38,24 @@ const ProductMainView = () => {
         ></m.div>
       </div>
       <div className="flex items-center mt-10 gap-4 ">
-        <InputSearch />
-        <ModalAddProduct />
+        <InputSearch disabled={isPending} />
+        <ModalAddProduct isLoading={isPending} />
       </div>
       <div className="mt-4 space-y-4">
-        <div className=" border border-gray-300 rounded-lg p-2 dark:border-gray-600">
-          <div className="relative">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-white">
-              Nama Barang
-            </h3>
-
-            <p className="text-xs  text-gray-600 mt-1 dark:text-white ">
-              <span className="font-medium text-gray-700 dark:text-white ">
-                {" "}
-                Harga
-              </span>{" "}
-              : {formatCurrency(10000)}
+        {isPending ? (
+          <Loader />
+        ) : data?.length > 0 ? (
+          data.map((product: Products) => (
+            <ProductCardList key={product.id} product={product} />
+          ))
+        ) : (
+          <div className="w-full flex justify-center items-center flex-col mt-20">
+            <FileQuestion size={50} strokeWidth={1} />
+            <p className="text-xs text-muted-foreground mt-2">
+              Data Tidak Ditemukan.
             </p>
-            <p className="text-xs text-gray-600 mt-1 dark:text-white">
-              <span className="font-medium text-gray-700 dark:text-white ">
-                Diskon
-              </span>{" "}
-              : 3pcs = {formatCurrency(5000)}
-            </p>
-            <div className="absolute top-0 right-1 flex gap-2">
-              <ModalEditProduct data={{ name: "Nama Barang", price: 10000 }} />
-              <ModalOneDelete />
-            </div>
           </div>
-        </div>
+        )}
       </div>
     </main>
   );
