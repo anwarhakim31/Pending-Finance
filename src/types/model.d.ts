@@ -15,8 +15,20 @@ export interface Products {
 
 export interface Record {
   id?: string;
-  date: Date;
+  date: Date | null;
   type?: string;
   product?: string;
-  quantity?: number;
+  quantity?: number | string;
+  total?: number;
+}
+
+export interface GroupData {
+  id?: string;
+  date: Date | null;
+  total?: number | null;
+  data: {
+    type?: string;
+    product?: string;
+    quantity?: number | string;
+  }[];
 }

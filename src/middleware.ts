@@ -32,6 +32,8 @@ export const config = {
     "/dashboard",
     "/products",
     "/profile",
+    "/record/:path*",
+    "/history",
     "/login",
     "/register",
     "/forget-password",

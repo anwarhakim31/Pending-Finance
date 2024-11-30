@@ -5,8 +5,8 @@ import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
     const { searchParams } = req.nextUrl;
     const month = searchParams.get("month") || new Date().toISOString();
 

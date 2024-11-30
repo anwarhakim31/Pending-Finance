@@ -1,6 +1,5 @@
 "use client";
 import InputSearch from "@/components/ui/InputSearch";
-import { motion as m } from "framer-motion";
 
 import React, { useEffect, useState } from "react";
 import { ModalAddProduct } from "./ModalAddProduct";
@@ -10,11 +9,7 @@ import ProductCardList from "@/components/views/Products/ProductCardList";
 import { FileQuestion } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Loader from "@/components/ui/Loader";
-
-const circlePath = {
-  x: [0, 200, 0, 100, 0, 200, 0, 300, 0],
-  y: [0, 0, -100, -50, 0, 50, 250, 200, 0],
-};
+import BubbleComponent from "@/components/ui/bubble";
 
 const ProductMainView = () => {
   const searchParams = useSearchParams();
@@ -41,16 +36,7 @@ const ProductMainView = () => {
           <h1 className="relative z-[1] text-white text-xs font-normal mt-2">
             Total Barang
           </h1>
-
-          <m.div
-            animate={circlePath}
-            transition={{
-              duration: 10,
-              ease: "linear",
-              repeat: Infinity,
-            }}
-            className="absolute z-0 top-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-orange-400 rounded-full  blur-3xl "
-          ></m.div>
+          <BubbleComponent />
         </div>
         <div className="flex items-center mt-10 gap-4 ">
           <InputSearch disabled={isPending} />

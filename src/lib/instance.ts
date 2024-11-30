@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
+import { ResponseErrorAxios } from "./ResponseErrorAxios";
 
 const headers = {
   accept: "application/json",
@@ -28,11 +29,12 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
+    ResponseErrorAxios(error);
     return Promise.reject(error);
   }
 );
 
-instance.interceptors.request.use(
+instance.interceptors.response.use(
   (config) => {
     return config;
   },

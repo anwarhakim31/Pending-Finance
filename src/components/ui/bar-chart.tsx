@@ -68,7 +68,7 @@ export function BarChartComponent({
   }
 
   return (
-    <ChartContainer className=" h-[175px] w-full p-0.5 " config={chartConfig}>
+    <ChartContainer className=" h-[165px] w-full p-0.5 " config={chartConfig}>
       <BarChart accessibilityLayer data={data}>
         <CartesianGrid vertical={false} strokeDasharray="0.1 0.1" />
         <XAxis
@@ -89,7 +89,7 @@ export function BarChartComponent({
           cursor={false}
           content={<ChartTooltipContent indicator="dashed" />}
         />
-        <Bar dataKey="ditambah" fill="#add8e6" barSize={20} radius={4} />
+        <Bar dataKey="ditambah" fill="#09a2ff" barSize={20} radius={4} />
         <Bar dataKey="diterima" fill="#ef4d4d" barSize={20} radius={4} />
       </BarChart>
     </ChartContainer>

@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/form";
 
 import { LoadingButton } from "@/components/ui/LoadingButton";
-import { Record } from "@/types/model";
 import { useQueryClient } from "@tanstack/react-query";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
@@ -102,18 +101,18 @@ function ProfileForm({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<{
-    date: Date;
-    total: string;
+    date: Date | null;
+    total: number;
   }>({
     defaultValues: {
-      date: new Date(),
-      total: undefined,
+      date: null,
+      total: 0,
     },
   });
   const query = useQueryClient();
   const { mutate, isPending } = useCreateReceive();
 
-  const onSubmit = (value: Record) => {
+  const onSubmit = (value: { date: Date | null; total: number }) => {
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["statistic"] });
