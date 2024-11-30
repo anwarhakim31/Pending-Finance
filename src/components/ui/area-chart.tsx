@@ -30,7 +30,7 @@ const chartConfig = {
 
 export function AreaChartComponent() {
   return (
-    <ChartContainer className=" h-[200px] w-full p-0.5 " config={chartConfig}>
+    <ChartContainer className=" h-[175px] w-full p-0.5 " config={chartConfig}>
       <AreaChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} strokeDasharray="0.1 0.1" />
         <XAxis
