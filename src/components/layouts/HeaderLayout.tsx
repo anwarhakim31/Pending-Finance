@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Logo from "../ui/logo";
 import { Avatar } from "../ui/avatar";
 import Image from "next/image";
@@ -7,23 +7,9 @@ import Link from "next/link";
 import { ThemeSwitcher } from "../ui/theme-switcher";
 
 const HeaderLayout = () => {
-  const [scroll, setScroll] = React.useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScroll(window.scrollY > 0 ? true : false);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <header
-      className={`fixed z-[1000] top-0 left-0 w-full   py-2  ${
-        scroll ? "shadow-md bg-white dark:bg-black " : ""
-      }`}
+      className={`absolute z-[1000] top-0 left-0 w-full    dark:bg-black py-2 `}
       data-theme="light"
     >
       <div className="container flex justify-between items-center px-3">

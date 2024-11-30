@@ -55,7 +55,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
             type="button"
             aria-label="Catat Pendapatan"
             disabled={isLoading}
-            className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400 dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+            className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400  disabled:pointer-events-none dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
           >
             Tambah
           </button>
@@ -78,7 +78,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
           type="button"
           aria-label="Catat Pendapatan"
           disabled={isLoading}
-          className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+          className="text-sm p-2 disabled:cursor-not-allowed  disabled:pointer-events-none dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
         >
           Tambah
         </button>
@@ -182,7 +182,12 @@ function ProfileForm({
             <FormItem className="flex flex-col ">
               <FormLabel>Jumlah barang dijual</FormLabel>
               <FormControl>
-                <Input placeholder="1" type="number" {...field} />
+                <Input
+                  placeholder="1"
+                  type="number"
+                  max={100000000}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

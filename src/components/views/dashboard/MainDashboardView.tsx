@@ -1,11 +1,18 @@
 "use client";
 import { BarChartComponent } from "@/components/ui/bar-chart";
-import { CircleCheck, CircleDollarSign, ClockArrowDown } from "lucide-react";
+import {
+  CalendarPlus,
+  CircleCheck,
+  CircleDollarSign,
+  ClockArrowDown,
+} from "lucide-react";
 import React from "react";
 import { ModalRecordIncome } from "./ModalRecordIncome";
 import { ModalRecordReceive } from "./ModalRecordReceive";
 import useFetchStatistic from "@/hooks/record/useFetchStatistic";
 import { formatCurrency } from "@/components/utils/helpers";
+
+import DateRecordView from "./DateRecordView";
 
 const MainDashboardView = () => {
   const { data, isLoading } = useFetchStatistic();
@@ -22,7 +29,7 @@ const MainDashboardView = () => {
             isLoading={isLoading}
           />
         </div>
-        <div className=" px-3 h-[calc(100vh-195px)] w-full border rounded-xl -mt-20 ">
+        <div className=" px-3 min-h-[calc(100vh-140px)]  w-full border  -mt-20 pb-20 md:pb-0 ">
           <div className="  grid grid-cols-1 sm:grid-cols-3 gap-2.5  mt-24 mb-4">
             <div className="h-11 dark:bg-black dark:border-gray-400 bg-white flex flex-col justify-between border px-4 py-1 border-gray-200 w-full rounded-3xl">
               <div className="flex items-center gap-1">
@@ -60,6 +67,11 @@ const MainDashboardView = () => {
             <ModalRecordReceive isLoading={isLoading} />
             <ModalRecordIncome isLoading={isLoading} />
           </div>
+          <div className="flex items-center mt-6 mb-4 text-gray-500 gap-2">
+            <CalendarPlus size={20} strokeWidth={1.5} />
+            <h3 className="text-xs text-normal  ">Riwayat terakhir ditambah</h3>
+          </div>
+          <DateRecordView />
         </div>
       </section>
     </main>

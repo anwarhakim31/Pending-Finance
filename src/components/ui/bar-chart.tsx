@@ -56,7 +56,7 @@ export function BarChartComponent({
     );
   }
 
-  if (!isLoading && data.length === 0) {
+  if (!isLoading && data?.length === 0) {
     return (
       <div className="flex items-center py-6 px-4 justify-center h-[175px] w-[100%] mx-auto">
         <div className="flex items-center justify-center gap-2">
