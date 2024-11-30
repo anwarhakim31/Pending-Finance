@@ -32,18 +32,15 @@ import {
 } from "@/components/ui/form";
 
 import { LoadingButton } from "@/components/ui/LoadingButton";
-import { Products, Record } from "@/types/model";
-
-import SelectSearchOption from "@/components/ui/select-search-option";
-import { Input } from "@/components/ui/input";
-import useFetchProduct from "@/hooks/product/useFetchProduct";
-import useCreateIncome from "@/hooks/record/useCreateIncome";
-// import { useQueryClient } from "@tanstack/react-query";
+import { Record } from "@/types/model";
+import { useQueryClient } from "@tanstack/react-query";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { InputCurrcency } from "@/components/ui/InputCurrency";
+import useCreateReceive from "@/hooks/record/useCreateReceive";
 
-export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
+export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -53,16 +50,15 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
         <DialogTrigger asChild>
           <button
             type="button"
-            aria-label="Catat Pendapatan"
             disabled={isLoading}
-            className="text-sm p-2 disabled:cursor-not-allowed text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+            className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-900 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
           >
-            Tambah
+            Terima
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Tambah Pendapatan</DialogTitle>
+            <DialogTitle>Pendapatan Diterima</DialogTitle>
           </DialogHeader>
           <DialogDescription></DialogDescription>
           <ProfileForm setOpen={setOpen} />
@@ -76,16 +72,15 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
       <DrawerTrigger asChild>
         <button
           type="button"
-          aria-label="Catat Pendapatan"
           disabled={isLoading}
-          className="text-sm p-2 disabled:cursor-not-allowed text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+          className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-900 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
         >
-          Tambah
+          Terima
         </button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Tambah Pendapatan</DrawerTitle>
+          <DrawerTitle>Pendapatan Diterima</DrawerTitle>
         </DrawerHeader>
         <DialogDescription></DialogDescription>
         <ProfileForm className="px-4" setOpen={setOpen} />
@@ -108,22 +103,20 @@ function ProfileForm({
 }) {
   const form = useForm<{
     date: Date;
-    product: string;
-    quantity: number | undefined;
+    total: string;
   }>({
     defaultValues: {
       date: new Date(),
-      product: "",
-      quantity: undefined,
+      total: undefined,
     },
   });
-  // const query = useQueryClient();
-  const { mutate, isPending } = useCreateIncome();
-  const { data, isLoading } = useFetchProduct();
+  const query = useQueryClient();
+  const { mutate, isPending } = useCreateReceive();
 
   const onSubmit = (value: Record) => {
     mutate(value, {
       onSuccess: (res) => {
+        query.invalidateQueries({ queryKey: ["statistic"] });
         toast.success(res.message);
         setOpen(false);
       },
@@ -153,19 +146,17 @@ function ProfileForm({
           />
           <FormField
             control={form.control}
-            name="product"
-            rules={{ required: "Barang tidak boleh kosong." }}
+            name="total"
+            rules={{ required: "Total tidak boleh kosong." }}
             render={({ field }) => (
               <FormItem className="flex flex-col ">
-                <FormLabel>Barang</FormLabel>
+                <FormLabel>Total Diterima</FormLabel>
                 <FormControl>
-                  <SelectSearchOption
-                    field={field}
-                    data={data?.data?.map((item: Products) => ({
-                      id: item.id,
-                      value: item.name,
-                    }))}
-                    isLoading={isLoading}
+                  <InputCurrcency
+                    {...field}
+                    type="number"
+                    placeholder="1000"
+                    min={0}
                   />
                 </FormControl>
                 <FormMessage />
@@ -173,22 +164,8 @@ function ProfileForm({
             )}
           />
         </div>
-        <FormField
-          control={form.control}
-          name="quantity"
-          rules={{ required: "Jumlah tidak boleh kosong." }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col ">
-              <FormLabel>Jumlah barang dijual</FormLabel>
-              <FormControl>
-                <Input placeholder="1" type="number" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <LoadingButton
-          loading={isPending || isLoading}
+          loading={isPending}
           style={{ marginTop: "2rem" }}
           type="submit"
         >
