@@ -38,7 +38,7 @@ import SelectSearchOption from "@/components/ui/select-search-option";
 import { Input } from "@/components/ui/input";
 import useFetchProduct from "@/hooks/product/useFetchProduct";
 import useCreateIncome from "@/hooks/record/useCreateIncome";
-// import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -55,7 +55,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
             type="button"
             aria-label="Catat Pendapatan"
             disabled={isLoading}
-            className="text-sm p-2 disabled:cursor-not-allowed text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+            className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400 dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
           >
             Tambah
           </button>
@@ -78,7 +78,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
           type="button"
           aria-label="Catat Pendapatan"
           disabled={isLoading}
-          className="text-sm p-2 disabled:cursor-not-allowed text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+          className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
         >
           Tambah
         </button>
@@ -117,13 +117,14 @@ function ProfileForm({
       quantity: undefined,
     },
   });
-  // const query = useQueryClient();
+  const query = useQueryClient();
   const { mutate, isPending } = useCreateIncome();
   const { data, isLoading } = useFetchProduct();
 
   const onSubmit = (value: Record) => {
     mutate(value, {
       onSuccess: (res) => {
+        query.invalidateQueries({ queryKey: ["statistic"] });
         toast.success(res.message);
         setOpen(false);
       },
