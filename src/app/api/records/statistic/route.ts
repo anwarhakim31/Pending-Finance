@@ -29,8 +29,7 @@ export async function GET(req: NextRequest) {
       });
 
       const totalPending =
-        BigInt(totalIncome?._sum?.total || 0) -
-        BigInt(totalReceive?._sum?.total || 0);
+        (totalIncome?._sum?.total || 0) - (totalReceive?._sum?.total || 0);
 
       // <--- STATISTIC RECORDS --->
 
@@ -47,7 +46,7 @@ export async function GET(req: NextRequest) {
         take: 1000,
       });
 
-      const uniqueDates = new Map<string, { date: Date; total: bigint }>();
+      const uniqueDates = new Map<string, { date: Date; total: number }>();
       records.forEach((record) => {
         const dateOnly = record.date.toISOString().split("T")[0];
         if (!uniqueDates.has(dateOnly)) {
@@ -98,9 +97,9 @@ export async function GET(req: NextRequest) {
           }
 
           if (record.type === "income") {
-            acc[date].income += Number(record._sum.total) || 0;
+            acc[date].income += record._sum.total || 0;
           } else if (record.type === "receive") {
-            acc[date].receive += Number(record._sum.total) || 0;
+            acc[date].receive += record._sum.total || 0;
           }
 
           return acc;

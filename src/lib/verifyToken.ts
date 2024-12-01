@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { ResponseError } from "./ResponseError";
 import jwt from "jsonwebtoken";
 
+export const runtime = "nodejs";
 export default async function verifyToken(req: NextRequest) {
   const accessToken = req.headers.get("Authorization")?.split(" ")[1];
 

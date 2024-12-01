@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { id } from "date-fns/locale";
 
 export function DatePicker({ field }: { field: FieldValues }) {
   return (
@@ -27,7 +28,7 @@ export function DatePicker({ field }: { field: FieldValues }) {
             )}
           >
             {field.value ? (
-              format(field.value, "PPP")
+              format(field.value, "PPP", { locale: id })
             ) : (
               <span>Pilih tanggal</span>
             )}

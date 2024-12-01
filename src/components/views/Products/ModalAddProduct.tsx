@@ -184,6 +184,7 @@ function ProfileForm({
                   {...field}
                   type="number"
                   min={0}
+                  max={100000000}
                   autoComplete="off"
                 />
               </FormControl>
@@ -207,6 +208,7 @@ function ProfileForm({
                       {...field}
                       autoComplete="off"
                       min={0}
+                      max={100000000}
                     />
                   </FormControl>
                   <FormMessage />
@@ -226,6 +228,7 @@ function ProfileForm({
                       type="number"
                       min={0}
                       autoComplete="off"
+                      max={100000000}
                     />
                   </FormControl>
                   <FormMessage />

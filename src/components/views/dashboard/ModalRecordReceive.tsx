@@ -51,7 +51,7 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
           <button
             type="button"
             disabled={isLoading}
-            className="text-sm p-2 disabled:cursor-not-allowed  dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+            className="text-sm p-2 disabled:cursor-not-allowed  disabled:pointer-events-none dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
           >
             Terima
           </button>
@@ -73,7 +73,7 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
         <button
           type="button"
           disabled={isLoading}
-          className="text-sm p-2 disabled:cursor-not-allowed dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
+          className="text-sm p-2 disabled:cursor-not-allowed  disabled:pointer-events-none dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
         >
           Terima
         </button>
@@ -156,6 +156,7 @@ function ProfileForm({
                     {...field}
                     type="number"
                     placeholder="1000"
+                    max={100000000}
                     min={0}
                   />
                 </FormControl>
