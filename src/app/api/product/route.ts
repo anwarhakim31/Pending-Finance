@@ -4,9 +4,8 @@ import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
-
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
     if (token && typeof token === "object" && "id" in token) {
@@ -54,8 +53,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
     const { searchParams } = req.nextUrl;
     const search = searchParams.get("search") || "";
 
@@ -112,8 +111,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
     if (token instanceof NextResponse) {
       return token;
     }
@@ -145,8 +144,8 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
     if (token instanceof NextResponse) {
       return token;
     }

@@ -42,6 +42,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
   const [open, setOpen] = React.useState(false);
@@ -62,7 +63,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Tambah Pendapatan</DialogTitle>
+            <DialogTitle>Tambah Catatan</DialogTitle>
           </DialogHeader>
           <DialogDescription></DialogDescription>
           <ProfileForm setOpen={setOpen} />
@@ -85,7 +86,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Tambah Pendapatan</DrawerTitle>
+          <DrawerTitle>Tambah Catatan</DrawerTitle>
         </DrawerHeader>
         <DialogDescription></DialogDescription>
         <ProfileForm className="px-4" setOpen={setOpen} />
@@ -107,26 +108,30 @@ function ProfileForm({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<{
-    date: Date;
+    date: Date | null;
     product: string;
-    quantity: number | undefined;
+    quantity: number | string;
   }>({
     defaultValues: {
-      date: new Date(),
+      date: null,
       product: "",
-      quantity: undefined,
+      quantity: "",
     },
   });
   const query = useQueryClient();
   const { mutate, isPending } = useCreateIncome();
   const { data, isLoading } = useFetchProduct();
+  const [autoClose, setAutoClose] = React.useState(true);
 
   const onSubmit = (value: Record) => {
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["statistic"] });
+        query.invalidateQueries({ queryKey: ["dateGroup"] });
         toast.success(res.message);
-        setOpen(false);
+        if (autoClose) {
+          setOpen(false);
+        }
       },
     });
   };
@@ -193,9 +198,22 @@ function ProfileForm({
             </FormItem>
           )}
         />
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="terms"
+            checked={autoClose}
+            onCheckedChange={() => setAutoClose((value) => !value)}
+          />
+          <label
+            htmlFor="terms"
+            className="text-xs text-gray-700 font-normal  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Tutup otomatis saat selesai menyimpan
+          </label>
+        </div>
         <LoadingButton
           loading={isPending || isLoading}
-          style={{ marginTop: "2rem" }}
+          style={{ marginTop: "1rem" }}
           type="submit"
         >
           Simpan

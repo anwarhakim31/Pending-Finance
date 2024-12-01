@@ -1,3 +1,4 @@
+import { formatToday } from "@/components/utils/helpers";
 import { prisma } from "@/lib/prisma";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
@@ -5,9 +6,8 @@ import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
-
     if (token && typeof token === "object" && "id" in token) {
       const totalIncome = await prisma.records.aggregate({
         _sum: {
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
         where: {
           userId: token.id as string,
           date: {
-            lte: new Date(),
+            lt: formatToday(new Date())[1],
           },
         },
         orderBy: {

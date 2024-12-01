@@ -4,17 +4,18 @@ import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  const token = await verifyToken(req);
   try {
-    const token = await verifyToken(req);
-
     if (token && typeof token === "object" && "id" in token) {
       const { date, total } = await req.json();
+      const localDate = new Date(date);
+      localDate.setHours(23, 59, 59, 999);
 
       await prisma.records.create({
         data: {
           userId: token.id as string,
           type: "receive",
-          date: date,
+          date: localDate,
           total: parseInt(total),
         },
       });

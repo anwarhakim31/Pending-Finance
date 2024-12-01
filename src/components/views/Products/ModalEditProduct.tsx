@@ -78,7 +78,7 @@ export function ModalEditProduct({ data }: { data: Products }) {
         <ProfileForm className="px-4" data={data} setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">Batal</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

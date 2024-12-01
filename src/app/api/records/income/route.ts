@@ -1,14 +1,18 @@
+import { formatToday } from "@/components/utils/helpers";
 import { prisma } from "@/lib/prisma";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  try {
-    const token = await verifyToken(req);
+  const token = await verifyToken(req);
 
+  try {
     if (token && typeof token === "object" && "id" in token) {
       const { date, quantity, product } = await req.json();
+
+      const localDate = new Date(date);
+      localDate.setHours(23, 59, 59, 999);
 
       const productDB = await prisma.products.findFirst({
         where: {
@@ -30,24 +34,72 @@ export async function POST(req: NextRequest) {
         ? totalPrice - totalPriceDiscount
         : totalPrice;
 
-      const groupRecord = await prisma.groupRecord.create({
-        data: {
-          date: date,
+      let groupRecord = await prisma.groupRecord.findFirst({
+        where: {
+          date: {
+            gte: formatToday(localDate)[0],
+            lt: formatToday(localDate)[1],
+          },
           userId: token.id as string,
+        },
+        include: {
+          records: true,
         },
       });
 
-      await prisma.records.create({
-        data: {
+      if (!groupRecord) {
+        groupRecord = await prisma.groupRecord.create({
+          data: {
+            date: localDate,
+            userId: token.id as string,
+          },
+          include: {
+            records: true,
+          },
+        });
+      }
+
+      console.log(formatToday(localDate));
+
+      const existingRecordToday = await prisma.records.findFirst({
+        where: {
+          date: {
+            gte: formatToday(localDate)[0],
+            lt: formatToday(localDate)[1],
+          },
           userId: token.id as string,
-          type: "income",
-          date: date,
           product: product,
-          total,
-          quantity: parseInt(quantity),
-          groupId: groupRecord.id,
+        },
+        select: {
+          id: true,
+          quantity: true,
+          total: true,
         },
       });
+
+      if (existingRecordToday) {
+        await prisma.records.update({
+          where: {
+            id: existingRecordToday.id,
+          },
+          data: {
+            quantity: (existingRecordToday?.quantity || 0) + parseInt(quantity),
+            total: existingRecordToday.total + total,
+          },
+        });
+      } else {
+        await prisma.records.create({
+          data: {
+            userId: token.id as string,
+            type: "income",
+            date: localDate,
+            product: product,
+            total,
+            quantity: parseInt(quantity),
+            groupId: groupRecord.id,
+          },
+        });
+      }
 
       return NextResponse.json({
         status: 200,
