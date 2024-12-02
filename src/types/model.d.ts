@@ -15,11 +15,12 @@ export interface Products {
 
 export interface Record {
   id?: string;
-  date: Date | null;
+  date?: Date | null;
   type?: string;
   product?: string;
   quantity?: number | string;
   total?: number;
+  groupId?: string;
 }
 
 export interface GroupData {

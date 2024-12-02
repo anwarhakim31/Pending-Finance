@@ -32,19 +32,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoadingButton } from "@/components/ui/LoadingButton";
-import { InputCurrcency } from "@/components/ui/InputCurrency";
 import { Edit2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import useUpdateGroupData from "@/hooks/record/useUpdateGroupData";
+import { Record } from "@/types/model";
+import { Input } from "@/components/ui/input";
 
-export function ModalEditRecord({
-  data,
-}: {
-  data: { id: string; quantity: number };
-}) {
+export function ModalEditRecord({ data }: { data: Record }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -94,7 +91,7 @@ function ProfileForm({
   setOpen,
 }: {
   className?: string;
-  data: { quantity: number; id: string };
+  data: Record;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<{
@@ -103,14 +100,14 @@ function ProfileForm({
   }>({
     defaultValues: {
       id: data.id || "",
-      quantity: data.quantity || 0,
+      quantity: Number(data?.quantity) || 0,
     },
   });
   const query = useQueryClient();
 
   const { mutate, isPending } = useUpdateGroupData();
 
-  const onSubmit = (data: { quantity: number; id: string }) => {
+  const onSubmit = (data: Record) => {
     mutate(data, {
       onSuccess: (data) => {
         toast.success(data.message);
@@ -137,7 +134,7 @@ function ProfileForm({
             <FormItem>
               <FormLabel>Jumlah yang dijual</FormLabel>
               <FormControl>
-                <InputCurrcency
+                <Input
                   placeholder=""
                   {...field}
                   type="number"

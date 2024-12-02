@@ -30,3 +30,11 @@ export const formatDateId = (date: string) => {
     year: "numeric",
   });
 };
+
+export function convertBigIntToJSON(obj: { [key: string]: bigint }) {
+  return JSON.parse(
+    JSON.stringify(obj, (_, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
+}

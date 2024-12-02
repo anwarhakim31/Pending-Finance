@@ -1,4 +1,4 @@
-import { formatToday } from "@/components/utils/helpers";
+import { formatToday } from "@/utils/helpers";
 import { prisma } from "@/lib/prisma";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
           },
           data: {
             quantity: (existingRecordToday?.quantity || 0) + parseInt(quantity),
-            total: existingRecordToday.total + total,
+            total: Number(existingRecordToday.total) + total,
           },
         });
       } else {
