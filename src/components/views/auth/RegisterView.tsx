@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { AxiosError } from "axios";
 import useRegister from "@/hooks/auth/useRegister";
-import { User } from "@/types/model";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingButton } from "@/components/ui/LoadingButton";
@@ -54,29 +53,29 @@ export function RegisterView() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  const { mutate, isPending } = useRegister({
-    onSuccess: async (data: User) => {
-      const res = await signIn("credentials", {
-        ...data,
-        redirect: false,
-      });
-
-      if (res?.ok) {
-        form.reset();
-        router.push(callbackUrl);
-      }
-    },
-    onError: (error) => {
-      if (error instanceof AxiosError && error.response) {
-        form.setError("fullname", {
-          message: error?.response?.data?.message,
-        });
-      }
-    },
-  });
+  const { mutate, isPending } = useRegister();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate(values);
+    mutate(values, {
+      onSuccess: async () => {
+        const res = await signIn("credentials", {
+          ...values,
+          redirect: false,
+        });
+
+        if (res?.ok) {
+          router.push(callbackUrl);
+        }
+      },
+      onError: (error) => {
+        if (error instanceof AxiosError && error.response) {
+          form.setValue("fullname", "");
+          form.setError("fullname", {
+            message: error?.response?.data?.message,
+          });
+        }
+      },
+    });
   }
 
   return (

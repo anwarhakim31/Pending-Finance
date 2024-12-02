@@ -28,12 +28,12 @@ const ProductMainView = () => {
 
   return (
     <main>
-      <section className="container pt-[4.5rem] pb-12 px-4 sm:pb-0">
+      <section className="container pt-[4.5rem] pb-12 px-4 ">
         <div className="relative overflow-hidden w-full h-24 bg-gradient-to-tr rounded-lg flex-center flex-col from-purple-700 p-4  via-violet-500 to-violet-400">
           <h3 className="relative z-[1] text-white text-4xl">
             {data?.pagination?.total || 0}
           </h3>
-          <h1 className="relative z-[1] text-white text-xs font-normal mt-2">
+          <h1 className="relative z-[1] text-white text-xs font-medium mt-2">
             Total Barang
           </h1>
           <BubbleComponent />

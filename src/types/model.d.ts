@@ -21,6 +21,7 @@ export interface Record {
   quantity?: number | string;
   total?: number;
   groupId?: string;
+  createdAt?: Date;
 }
 
 export interface GroupData {
