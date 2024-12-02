@@ -30,7 +30,7 @@ const NavLayout = () => {
           size={24}
           strokeWidth={1}
           className={`text-gray-700 dark:text-gray-200  ${
-            pathname === "/products" ? "fill-violet-700 text-violet-400" : ""
+            pathname === "/products" ? "fill-violet-700 text-white" : ""
           }`}
         />
       ),
@@ -43,7 +43,7 @@ const NavLayout = () => {
           size={24}
           strokeWidth={1}
           className={`text-gray-700 dark:text-gray-200  ${
-            pathname === "/history" ? "fill-violet-700 text-violet-400" : ""
+            pathname === "/history" ? "fill-violet-700 text-white" : ""
           }`}
         />
       ),

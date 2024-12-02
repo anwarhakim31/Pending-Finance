@@ -62,6 +62,7 @@ const LoginView = () => {
       router.push(callbackUrl);
     } catch (error) {
       if (error instanceof AxiosError) {
+        form.reset();
         setIsLoading(false);
       }
     }

@@ -8,6 +8,8 @@ export async function POST(req: NextRequest) {
   try {
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
+    console.log(name, price, discountPrice, discountQuantity);
+
     if (token && typeof token === "object" && "id" in token) {
       const nameIsExist = await prisma.products.findFirst({
         where: {
@@ -29,6 +31,7 @@ export async function POST(req: NextRequest) {
           discountQuantity: parseInt(discountQuantity),
         },
       });
+      console.log(product);
 
       return NextResponse.json({
         status: 200,

@@ -59,8 +59,6 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      console.log(formatToday(localDate));
-
       const existingRecordToday = await prisma.records.findFirst({
         where: {
           date: {

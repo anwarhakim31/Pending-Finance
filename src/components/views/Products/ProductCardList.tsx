@@ -6,10 +6,7 @@ import { ModalOneDelete } from "../../fragments/ModalOneDelete";
 
 const ProductCardList = ({ product }: { product: Products }) => {
   return (
-    <div
-      key={product.id}
-      className=" border border-gray-300 rounded-lg p-2 dark:border-gray-600"
-    >
+    <div className=" border border-gray-300 rounded-lg p-2 dark:border-gray-600">
       <div className="relative">
         <h3 className="text-base font-medium text-gray-800 dark:text-white">
           {product.name}

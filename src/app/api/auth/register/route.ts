@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         fullname: fullname,
         password: hashedPassword,
@@ -29,7 +29,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ status: 200, success: true, data: user });
+    return NextResponse.json({
+      status: 200,
+      success: true,
+      message: "Berhasil membuat akun",
+    });
   } catch (error) {
     console.error(error);
     return ResponseError("Internal Server Error", 500);

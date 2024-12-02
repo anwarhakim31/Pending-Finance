@@ -20,7 +20,7 @@ export function ThemeSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full  focus-within:border-violet-700 dark:border-gray-600"
+          className="rounded-full h-8 w-8 p-0  focus-within:border-violet-700 dark:border-gray-600"
           size="icon"
         >
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

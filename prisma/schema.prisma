@@ -19,7 +19,7 @@ model User {
 
 model Products{
   id Int @id @default(autoincrement())
-  name String @unique
+  name String 
   userId String 
   price Int
   discountPrice Int?
