@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
             gte: firstDayOfPreviousMonth,
             lte: lastDayOfNextMonth,
           },
+          records: { some: { total: { gt: 0 } } },
         },
       });
 

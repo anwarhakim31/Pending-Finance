@@ -1,4 +1,4 @@
-import { formatToday } from "@/components/utils/helpers";
+import { convertBigIntToJSON, formatToday } from "@/utils/helpers";
 import { prisma } from "@/lib/prisma";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
@@ -29,7 +29,8 @@ export async function GET(req: NextRequest) {
       });
 
       const totalPending =
-        (totalIncome?._sum?.total || 0) - (totalReceive?._sum?.total || 0);
+        (totalIncome?._sum?.total || BigInt(0)) -
+        (totalReceive?._sum?.total || BigInt(0));
 
       // <--- STATISTIC RECORDS --->
 
@@ -45,12 +46,16 @@ export async function GET(req: NextRequest) {
         },
         take: 1000,
       });
-
       const uniqueDates = new Map<string, { date: Date; total: number }>();
+
       records.forEach((record) => {
         const dateOnly = record.date.toISOString().split("T")[0];
+
         if (!uniqueDates.has(dateOnly)) {
-          uniqueDates.set(dateOnly, record);
+          uniqueDates.set(dateOnly, {
+            date: record.date,
+            total: Number(record.total),
+          });
         }
       });
 
@@ -97,9 +102,9 @@ export async function GET(req: NextRequest) {
           }
 
           if (record.type === "income") {
-            acc[date].income += record._sum.total || 0;
+            acc[date].income += Number(record._sum.total) || 0;
           } else if (record.type === "receive") {
-            acc[date].receive += record._sum.total || 0;
+            acc[date].receive += Number(record._sum.total) || 0;
           }
 
           return acc;
@@ -117,13 +122,17 @@ export async function GET(req: NextRequest) {
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
+      const responseData = convertBigIntToJSON({
+        totalIncome: totalIncome._sum.total || BigInt(0),
+        totalReceive: totalReceive._sum.total || BigInt(0),
+        totalPending,
+      });
+
       return NextResponse.json({
         status: 200,
         success: true,
         data: {
-          totalIncome: totalIncome._sum.total,
-          totalReceive: totalReceive._sum.total,
-          totalPending: totalPending,
+          ...responseData,
           chartStatistic: formattedChartStatistic,
         },
         message: "Berhasil mendapatakan data.",

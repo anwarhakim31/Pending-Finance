@@ -2,9 +2,7 @@ import instance from "@/lib/instance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const useDeleteOneProduct = (id: string, url: string, keys: string) => {
-  console.log(keys);
-
+const useDeleteOneProduct = (id: string, url: string, queryKeys: string[]) => {
   const query = useQueryClient();
   return useMutation({
     mutationFn: async () => {
@@ -14,7 +12,9 @@ const useDeleteOneProduct = (id: string, url: string, keys: string) => {
     },
     onSuccess: () => {
       toast.success("Berhasil menghapus data");
-      query.refetchQueries({ queryKey: [`products`] });
+      queryKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);

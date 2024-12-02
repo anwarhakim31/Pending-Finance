@@ -20,7 +20,7 @@ export function ModalOneDelete({
 }: {
   id: string;
   url: string;
-  keys: string;
+  keys: string[];
 }) {
   const { mutate, isPending } = useDeleteOne(id, url, keys);
 

@@ -1,6 +1,6 @@
 import { Products } from "@/types/model";
 import React from "react";
-import { formatCurrency } from "../../utils/helpers";
+import { formatCurrency } from "../../../utils/helpers";
 import { ModalEditProduct } from "./ModalEditProduct";
 import { ModalOneDelete } from "../../fragments/ModalOneDelete";
 
@@ -35,7 +35,7 @@ const ProductCardList = ({ product }: { product: Products }) => {
           <ModalOneDelete
             id={product?.id?.toString() || ""}
             url="/product"
-            keys="products"
+            keys={["products"]}
           />
         </div>
       </div>

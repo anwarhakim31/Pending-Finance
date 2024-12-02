@@ -10,10 +10,9 @@ import React from "react";
 import { ModalRecordIncome } from "./ModalRecordIncome";
 import { ModalRecordReceive } from "./ModalRecordReceive";
 import useFetchStatistic from "@/hooks/record/useFetchStatistic";
-import { formatCurrency } from "@/components/utils/helpers";
-
 import DateRecordView from "./DateRecordView";
 import { Meteors } from "@/components/ui/meteor";
+import AnimateCounter from "@/components/ui/animate-counter";
 
 const MainDashboardView = () => {
   const { data, isLoading } = useFetchStatistic();
@@ -31,7 +30,7 @@ const MainDashboardView = () => {
           />
           <Meteors number={10} />
         </div>
-        <div className=" px-3 min-h-[calc(100vh-140px)]  w-full border  -mt-20 pb-20 md:pb-0 ">
+        <div className=" px-3 min-h-[calc(100vh-140px)]  w-full   -mt-20 pb-20 md:pb-0 ">
           <div className="  grid grid-cols-1 sm:grid-cols-3 gap-2.5  mt-24 mb-4">
             <div className="h-14 dark:bg-black dark:border-gray-400 bg-white flex flex-col justify-between border px-4 py-2 border-gray-200 w-full rounded-xl">
               <div className="flex items-center gap-1">
@@ -41,7 +40,10 @@ const MainDashboardView = () => {
                 </h3>
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
-                {formatCurrency(data?.data?.totalReceive || 0)}
+                <AnimateCounter
+                  value={data?.data?.totalReceive || 0}
+                  type="currency"
+                />
               </h1>
             </div>
             <div className="h-14 dark:bg-black dark:border-gray-400 bg-white flex flex-col justify-between border px-4 py-2 border-gray-200 w-full rounded-xl">
@@ -52,7 +54,10 @@ const MainDashboardView = () => {
                 </h3>
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
-                {formatCurrency(data?.data?.totalPending || 0)}
+                <AnimateCounter
+                  value={data?.data?.totalPending || 0}
+                  type="currency"
+                />
               </h1>
             </div>
             <div className="h-14 dark:bg-black dark:border-gray-400 bg-white flex flex-col justify-between border px-4 py-2 border-gray-200 w-full rounded-xl">
@@ -61,7 +66,10 @@ const MainDashboardView = () => {
                 <h3 className="text-xs font-medium  text-blue-500">Total</h3>
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
-                {formatCurrency(data?.data?.totalIncome || 0)}
+                <AnimateCounter
+                  value={data?.data?.totalIncome || 0}
+                  type="currency"
+                />
               </h1>
             </div>
           </div>

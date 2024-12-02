@@ -1,16 +1,22 @@
 "use client";
-import { ModalOneDelete } from "@/components/fragments/ModalOneDelete";
-import BubbleComponent from "@/components/ui/bubble";
-import { formatCurrency, formatDateId } from "@/components/utils/helpers";
+import { formatCurrency, formatDateId } from "@/utils/helpers";
 import useFetchGroupData from "@/hooks/record/useFetchGroupData";
-import { Boxes, CircleDollarSign } from "lucide-react";
+import { Boxes, CircleDollarSign, Copy } from "lucide-react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
-import { ModalEditRecord } from "./ModalEditRecord";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/ui/Loader";
+import { Skeleton } from "@/components/ui/skeleton";
+import AnimateCounter from "@/components/ui/animate-counter";
+import { ModalDeleteRecord } from "./ModalDeleteRecord";
+import RecordListView from "./RecordListView";
 import { Record } from "@/types/model";
+import Image from "next/image";
+import wa from "@/assets/wa.svg";
 
 const MainRecordView = ({ id }: { id: string }) => {
-  const { data, isError } = useFetchGroupData(id);
+  const { data, isError, isLoading, isFetching } = useFetchGroupData(id);
+  const router = useRouter();
 
   useEffect(() => {
     if (isError) {
@@ -18,15 +24,50 @@ const MainRecordView = ({ id }: { id: string }) => {
     }
   }, [isError]);
 
+  useEffect(() => {
+    if (!isLoading && !isFetching && data?.data?.record?.length === 0) {
+      router.push("/dashboard");
+    }
+  }, [isLoading, data?.data?.record?.length, router, isFetching]);
+
   return (
     <main>
       <section className="container pt-[4.5rem] pb-12 px-4 sm:pb-0">
-        <h3 className="text-sm font-medium text-black dark:text-white">
-          Tanggal Dicatat :
-        </h3>
-        <p className="text-[10px] xs:text-xs text-gray-600 mt-1 dark:text-white ">
-          {formatDateId(data?.data?.date || "")}
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-sm font-medium text-black dark:text-white">
+              Tanggal Dicatat :
+            </h3>
+            {isLoading ? (
+              <Skeleton className=" h-4 w-32 mt-1 bg-gray-200 rounded-xs"></Skeleton>
+            ) : (
+              <p className="text-xs text-gray-600 mt-1 dark:text-white ">
+                {formatDateId(data?.data?.date || "")}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="copy"
+              title="Salin Catatan"
+              type="button"
+              onClick={() => handleSendWhatsapp(data)}
+              className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+            >
+              <Image src={wa} alt="whatsapp" width={20} height={20} />
+            </button>
+            <button
+              aria-label="copy"
+              title="Salin Catatan"
+              type="button"
+              onClick={() => handleCopyText(data)}
+              className="flex-center gap-2 w-8 h-8 rounded-md bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+            >
+              <Copy size={16} strokeWidth={1.5} />
+            </button>
+            <ModalDeleteRecord id={id} />
+          </div>
+        </div>
         <div className="relative grid mt-4 grid-cols-2 gap-2 overflow-hidden w-full min-h-20 bg-gradient-to-tr rounded-lg from-purple-700 p-4  via-violet-500 to-violet-400">
           <div className=" p-2 flex items-center gap-2">
             <div className="flex-shrink-0 h-7 w-7 flex-center bg-white rounded-full ">
@@ -41,7 +82,10 @@ const MainRecordView = ({ id }: { id: string }) => {
                 Total Pendapatan
               </h5>
               <p className="text-sm sm:text-lg font-medium text-white">
-                {formatCurrency(data?.data?.totalIncome || 0)}
+                <AnimateCounter
+                  value={parseInt(data?.data?.totalIncome || "0")}
+                  type="currency"
+                />
               </p>
             </div>
           </div>
@@ -58,38 +102,60 @@ const MainRecordView = ({ id }: { id: string }) => {
                 Total Barang Dijual
               </h5>
               <p className="text-sm sm:text-lg font-medium text-white">
-                {data?.data?.totalProduct || 0}
+                <AnimateCounter
+                  value={data?.data?.totalProduct || 0}
+                  type="number"
+                />
               </p>
             </div>
           </div>
-          <BubbleComponent />
         </div>
 
-        <div className="grid grid-cols-1 xs:grid-cols-2 mt-6 gap-2">
-          {data?.data?.record?.map((record: Record) => (
-            <div
-              key={record.id}
-              className="relative rounded-md border border-gray-300 dark:border-gray-700 p-2 shadow-md pr-6"
-            >
-              <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
-                {record.product}
-              </h5>
-              <p className="text-[10px] xs:text-xs text-gray-600 mt-2 dark:text-white ">
-                Jumlah Dijual : {record?.quantity}
-              </p>
-              <p className="text-[10px] xs:text-xs text-gray-600 mt-1 dark:text-white ">
-                Total Harga : {formatCurrency((record?.total as number) || 0)}
-              </p>
-              <div className="absolute top-2 right-2 flex gap-2 bg-white dark:bg-black flex-col">
-                <ModalOneDelete id={data?.data?.id || ""} url="" keys="" />
-                <ModalEditRecord data={data?.data} />
-              </div>
-            </div>
-          ))}
-        </div>
+        {isLoading ? <Loader /> : <RecordListView data={data} id={id} />}
       </section>
     </main>
   );
+};
+
+const handleSendWhatsapp = (data: {
+  data: { totalIncome: number; date: string; record: Record[] };
+}) => {
+  const message = `Catatan Penjualan Tanggal : ${formatDateId(
+    data?.data?.date || ""
+  )}\n\n${data?.data?.record.map((item: Record, i: number) => {
+    return `${i + 1}. ${item.product} : ${
+      item.quantity
+    } pcs => Total Harga : ${formatCurrency(item.total || 0)}`;
+  })}\n\n${
+    data.data.totalIncome ? `Total Keseluruhan : ${data.data.totalIncome}` : 0
+  }`;
+
+  const url = `https://wa.me/6281319981546?text=${encodeURIComponent(message)}`;
+
+  window.open(url, "_blank");
+};
+
+const handleCopyText = (data: {
+  data: { totalIncome: number; date: string; record: Record[] };
+}) => {
+  navigator.clipboard
+    .writeText(
+      `Catatan Penjualan Tanggal : ${formatDateId(
+        data?.data?.date || ""
+      )}\n\n${data?.data?.record.map((item: Record, i: number) => {
+        return `${i + 1}. ${item.product} : ${
+          item.quantity
+        } pcs => Total Harga : ${formatCurrency(item.total || 0)}`;
+      })}\n\n${
+        data.data.totalIncome
+          ? `Total Keseluruhan : ${data.data.totalIncome}`
+          : 0
+      }
+        `
+    )
+    .then(() => {
+      toast.success("Catatan berhasil disalin");
+    });
 };
 
 export default MainRecordView;
