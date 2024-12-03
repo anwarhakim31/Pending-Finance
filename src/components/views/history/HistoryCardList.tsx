@@ -1,7 +1,7 @@
 import { ModalOneDelete } from "@/components/fragments/ModalOneDelete";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Record } from "@/types/model";
-import { formatDateId } from "@/utils/helpers";
+import { formatCurrency, formatDateId } from "@/utils/helpers";
 import React from "react";
 
 const HistoryCardList = ({
@@ -48,7 +48,8 @@ const HistoryCardList = ({
             </>
           ) : null}
           <p className="text-xs">
-            <span className="w-24 inline-block">Total</span>: {item?.total}
+            <span className="w-24 inline-block">Total</span>:{" "}
+            {formatCurrency(Number(item.total) || 0)}
           </p>
         </div>
         <ModalOneDelete
