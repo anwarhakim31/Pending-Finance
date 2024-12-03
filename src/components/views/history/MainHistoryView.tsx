@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Loader from "@/components/ui/Loader";
 import useFetchRecordHistory from "@/hooks/record/useFetchRecordHistory";
 import { Record } from "@/types/model";
-import { EllipsisVertical, FileQuestion } from "lucide-react";
+import { Copy, EllipsisVertical, FileQuestion } from "lucide-react";
 import React from "react";
 import HistoryCardList from "./HistoryCardList";
 import { ModalDeleteHistory } from "./ModalDeleteHistory";
@@ -12,6 +12,11 @@ import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
 import { useSearchParams } from "next/navigation";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { DateRange } from "react-day-picker";
+import Image from "next/image";
+import wa from "@/assets/wa.svg";
+
+import { toast } from "sonner";
+import { historyMap, historyTextMap } from "@/utils/mapping";
 
 const MainHistoryView = () => {
   const [dataCheck, setDataCheck] = React.useState<string[]>([]);
@@ -46,17 +51,59 @@ const MainHistoryView = () => {
     }
   };
 
+  const handleCopyText = (data: Record[]) => {
+    const remap = historyMap(data);
+
+    navigator.clipboard.writeText(historyTextMap(remap)).then(() => {
+      toast.success("Catatan berhasil disalin");
+    });
+  };
+
+  const handleSendWa = (data: Record[]) => {
+    const remap = historyMap(data);
+
+    const message = historyTextMap(remap);
+
+    const url = `https://wa.me/6281319981546?text=${encodeURIComponent(
+      message
+    )}`;
+
+    window.open(url, "_blank");
+  };
+
   return (
     <main>
       <section className="container pt-[4.5rem] pb-12 px-4 ">
-        <div className="flex gap-2 items-center select-none">
-          <div className="flex gap-1 items-center ">
-            <EllipsisVertical size={16} className="text-blue-600" />
-            <span className="text-xs">Ditambah</span>
+        <div className="flex gap-2 items-center justify-between ">
+          <div className="flex gap-2 items-center select-none">
+            <div className="flex gap-1 items-center ">
+              <EllipsisVertical size={16} className="text-blue-600" />
+              <span className="text-xs">Ditambah</span>
+            </div>
+            <div className="flex gap-1 items-center ">
+              <EllipsisVertical size={16} className="text-green-600" />
+              <span className="text-xs">Diterima</span>
+            </div>
           </div>
-          <div className="flex gap-1 items-center ">
-            <EllipsisVertical size={16} className="text-green-600" />
-            <span className="text-xs">Diterima</span>
+          <div className="flex gap-2 items-center">
+            <button
+              aria-label="copy"
+              title="Kirim Whatsapp"
+              type="button"
+              onClick={() => handleSendWa(data?.data)}
+              className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+            >
+              <Image src={wa} alt="whatsapp" width={20} height={20} />
+            </button>
+            <button
+              aria-label="copy"
+              title="Salin Catatan"
+              type="button"
+              onClick={() => handleCopyText(data?.data)}
+              className="flex-center gap-2 w-8 h-8 rounded-md bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+            >
+              <Copy size={16} strokeWidth={1.5} />
+            </button>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2 mt-3">

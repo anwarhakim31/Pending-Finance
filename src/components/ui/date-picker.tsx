@@ -14,10 +14,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { id } from "date-fns/locale";
+import { useState } from "react";
 
 export function DatePicker({ field }: { field: FieldValues }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <FormControl>
           <Button
@@ -40,7 +43,10 @@ export function DatePicker({ field }: { field: FieldValues }) {
         <Calendar
           mode="single"
           selected={field.value}
-          onSelect={field.onChange}
+          onSelect={(date) => {
+            field.onChange(date);
+            setIsOpen(false);
+          }}
           className="text-xs"
           disabled={(date) =>
             date > new Date() || date < new Date("1900-01-01")
