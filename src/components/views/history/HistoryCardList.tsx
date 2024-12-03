@@ -17,8 +17,10 @@ const HistoryCardList = ({
     <div className="mt-4">
       <div
         className={`flex flex-between border border-l-4 ${
-          item.type === "receive" ? "border-l-green-600" : "border-l-blue-600"
-        } p-4 gap-2 rounded-tr-md rounded-br-md min-h-[5.5rem] border-gray-300 dark:border-gray-600`}
+          item.type === "receive"
+            ? "border-l-green-600 dark:border-l-blue-600"
+            : "border-l-blue-600 dark:border-l-green-600"
+        } p-4 gap-2 rounded-md min-h-[5.5rem] border-gray-300 dark:border-gray-600`}
       >
         <Checkbox
           id={item.id}

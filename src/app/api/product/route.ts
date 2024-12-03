@@ -8,8 +8,6 @@ export async function POST(req: NextRequest) {
   try {
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
-    console.log(name, price, discountPrice, discountQuantity);
-
     if (token && typeof token === "object" && "id" in token) {
       const nameIsExist = await prisma.products.findFirst({
         where: {
@@ -31,7 +29,6 @@ export async function POST(req: NextRequest) {
           discountQuantity: parseInt(discountQuantity),
         },
       });
-      console.log(product);
 
       return NextResponse.json({
         status: 200,
@@ -60,6 +57,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = req.nextUrl;
     const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "2");
 
     if (typeof token === "object" && "id" in token) {
       const product = await prisma.products.findMany({
@@ -72,6 +71,8 @@ export async function GET(req: NextRequest) {
         orderBy: {
           createdAt: "desc",
         },
+        skip: (page - 1) * limit,
+        take: limit,
       });
 
       const total = await prisma.products.count({
@@ -88,10 +89,9 @@ export async function GET(req: NextRequest) {
         success: true,
         data: product,
         pagination: {
-          page: 1,
-          limit: 10,
+          page: page,
+          limit: limit,
           total,
-          pages: Math.ceil(total / 10),
         },
         message: "Berhasil mengambil data barang.",
       });
