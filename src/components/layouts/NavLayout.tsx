@@ -57,7 +57,7 @@ const NavLayout = () => {
           <Link
             key={item.title}
             href={item.path}
-            className={`relative z-10 flex flex-col justify-center items-center w-full max-w-28 h-16 hover:bg-violet-100 dark:hover:bg-gray-700 ${
+            className={`relative z-10 flex flex-col justify-center items-center w-full max-w-28 h-14 hover:bg-violet-100 dark:hover:bg-gray-700 ${
               pathname === item.path ? "text-violet-700 fill-violet-700" : ""
             }`}
           >

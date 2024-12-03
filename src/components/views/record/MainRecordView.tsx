@@ -52,7 +52,7 @@ const MainRecordView = ({ id }: { id: string }) => {
               title="Salin Catatan"
               type="button"
               onClick={() => handleSendWhatsapp(data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400  transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-green-400 dark:border-green-500 dark:hover:bg-green-500 dark:hover:border-gray-500"
             >
               <Image src={wa} alt="whatsapp" width={20} height={20} />
             </button>
