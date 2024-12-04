@@ -25,7 +25,7 @@ const HeaderLayout = () => {
           >
             <Avatar className="w-8 h-8 bg-gray-200 dark:bg-black ">
               <Image
-                src={session.data?.user?.photo || "/images/avatar.png"}
+                src={session.data?.user?.photo || "/user.png"}
                 alt="user"
                 width={40}
                 height={40}

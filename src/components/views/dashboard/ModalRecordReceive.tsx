@@ -112,6 +112,10 @@ function ProfileForm({
   const query = useQueryClient();
   const { mutate, isPending } = useCreateReceive();
 
+  React.useEffect(() => {
+    form.setValue("date", new Date());
+  }, [form]);
+
   const onSubmit = (value: { date: Date | null; total: number }) => {
     mutate(value, {
       onSuccess: (res) => {

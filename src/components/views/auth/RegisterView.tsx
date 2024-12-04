@@ -88,7 +88,12 @@ export function RegisterView() {
             <FormItem>
               <FormLabel>Nama Toko</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} autoComplete="off" />
+                <Input
+                  placeholder="warung"
+                  type="text"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -101,7 +106,12 @@ export function RegisterView() {
             <FormItem style={{ marginTop: "1rem" }}>
               <FormLabel>Nama Lengkap</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} autoComplete="off" />
+                <Input
+                  placeholder="pending"
+                  type="text"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,7 +125,7 @@ export function RegisterView() {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
-                  placeholder=""
+                  placeholder="**********"
                   type="password"
                   {...field}
                   autoComplete="off"

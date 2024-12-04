@@ -86,7 +86,12 @@ const LoginView = () => {
             <FormItem style={{ marginTop: "1rem" }}>
               <FormLabel>Nama Lengkap</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} autoComplete="off" />
+                <Input
+                  placeholder="pending"
+                  type="text"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,7 +105,7 @@ const LoginView = () => {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
-                  placeholder=""
+                  placeholder="***********"
                   type="password"
                   {...field}
                   autoComplete="off"

@@ -125,7 +125,7 @@ function ProfileForm({
 
   React.useEffect(() => {
     form.setValue("date", new Date());
-  }, []);
+  }, [form]);
 
   const onSubmit = (value: Record) => {
     mutate(value, {
