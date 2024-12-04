@@ -27,7 +27,11 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en" className="light" style={{ colorScheme: "light" }}>
+    <html
+      lang="en"
+      className="light scroll-smooth"
+      style={{ colorScheme: "light" }}
+    >
       <body className={inter.className}>
         <SessionProvider session={session}>
           <QueryClientProvider>
