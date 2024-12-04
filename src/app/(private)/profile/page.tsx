@@ -1,9 +1,15 @@
-"use client";
-import { signOut } from "next-auth/react";
-import React from "react";
+import HeaderLayout from "@/components/layouts/HeaderLayout";
+import NavLayout from "@/components/layouts/NavLayout";
+import ProfileMainView from "@/components/views/profile/ProfileMainView";
 
 const ProfilePage = () => {
-  return <div onClick={() => signOut({ callbackUrl: "/login" })}>Logout</div>;
+  return (
+    <>
+      <HeaderLayout />
+      <ProfileMainView />
+      <NavLayout />
+    </>
+  );
 };
 
 export default ProfilePage;

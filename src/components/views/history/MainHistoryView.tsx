@@ -90,6 +90,7 @@ const MainHistoryView = () => {
               aria-label="copy"
               title="Kirim Whatsapp"
               type="button"
+              disabled={data?.data?.length === 0 || isLoading}
               onClick={() => handleSendWa(data?.data)}
               className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
@@ -99,8 +100,9 @@ const MainHistoryView = () => {
               aria-label="copy"
               title="Salin Catatan"
               type="button"
+              disabled={data?.data?.length === 0 || isLoading}
               onClick={() => handleCopyText(data?.data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md  bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
               <Copy size={16} strokeWidth={1.5} />
             </button>
@@ -126,7 +128,11 @@ const MainHistoryView = () => {
             </label>
             <ModalDeleteHistory dataCheck={dataCheck} />
           </div>
-          <div>
+          <div
+            className={` ${
+              data?.data?.length === 0 || isLoading ? "pointer-events-none" : ""
+            }`}
+          >
             <DatePickerWithRange date={date} setDate={setDate} />
           </div>
         </div>

@@ -13,7 +13,8 @@ model User {
   fullname String @unique
   password String
   store String 
-  photo String?  
+  photo String?
+  phone String?  
   createdAt DateTime @default(now())
 }
 
