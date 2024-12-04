@@ -24,15 +24,20 @@ export async function POST(req: NextRequest) {
         return ResponseError("Produk tidak ditemukan", 400);
       }
 
-      const totalPrice = productDB.price * parseInt(quantity);
-      const totalPriceDiscount =
-        productDB.discountQuantity && productDB.discountPrice
-          ? (parseInt(quantity) % productDB.discountQuantity) *
-            productDB.discountPrice
-          : 0;
-      const total = productDB.discountPrice
-        ? totalPrice - totalPriceDiscount
-        : totalPrice;
+      let total = 0;
+
+      if (productDB.discountQuantity && productDB.discountPrice) {
+        const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
+
+        const qtyNotDiscount =
+          quantity - qtyDiscount * productDB.discountQuantity;
+
+        total =
+          qtyNotDiscount * productDB.price +
+          qtyDiscount * productDB.discountPrice;
+      } else {
+        total = productDB.price * parseInt(quantity);
+      }
 
       let groupRecord = await prisma.groupRecord.findFirst({
         where: {

@@ -10,21 +10,23 @@ import HistoryCardList from "./HistoryCardList";
 import { ModalDeleteHistory } from "./ModalDeleteHistory";
 import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
 import { useSearchParams } from "next/navigation";
-import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import { DatePickerWithRange } from "@/components/fragments/DatePickerRange";
 import { DateRange } from "react-day-picker";
 import Image from "next/image";
 import wa from "@/assets/wa.svg";
 
 import { toast } from "sonner";
 import { historyMap, historyTextMap } from "@/utils/mapping";
+import { useSession } from "next-auth/react";
 
 const MainHistoryView = () => {
+  const session = useSession();
   const [dataCheck, setDataCheck] = React.useState<string[]>([]);
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "20");
+  const pageSize = parseInt(searchParams.get("pageSize") || "100");
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 10, 20),
+    from: new Date(2023, 10, 20),
     to: new Date(),
   });
 
@@ -60,13 +62,16 @@ const MainHistoryView = () => {
   };
 
   const handleSendWa = (data: Record[]) => {
+    if (!session.data?.user?.phone)
+      toast.error("Nomor Whatsapp belum ditambakan di halaman profile");
+
     const remap = historyMap(data);
 
     const message = historyTextMap(remap);
 
-    const url = `https://wa.me/6281319981546?text=${encodeURIComponent(
-      message
-    )}`;
+    const url = `https://wa.me/${
+      session.data?.user?.phone
+    }?text=${encodeURIComponent(message)}`;
 
     window.open(url, "_blank");
   };
@@ -92,7 +97,7 @@ const MainHistoryView = () => {
               type="button"
               disabled={data?.data?.length === 0 || isLoading}
               onClick={() => handleSendWa(data?.data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md disabled:cursor-not-allowed bg-green-400 transition-all duration-300 ease-in border border-gray-300 hover:bg-green-500  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
               <Image src={wa} alt="whatsapp" width={20} height={20} />
             </button>
@@ -102,7 +107,7 @@ const MainHistoryView = () => {
               type="button"
               disabled={data?.data?.length === 0 || isLoading}
               onClick={() => handleCopyText(data?.data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md  bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md  disabled:cursor-not-allowed bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
               <Copy size={16} strokeWidth={1.5} />
             </button>
@@ -126,15 +131,13 @@ const MainHistoryView = () => {
             >
               Pilih Semua
             </label>
-            <ModalDeleteHistory dataCheck={dataCheck} />
+            <ModalDeleteHistory
+              dataCheck={dataCheck}
+              setDataCheck={setDataCheck}
+            />
           </div>
-          <div
-            className={` ${
-              data?.data?.length === 0 || isLoading ? "pointer-events-none" : ""
-            }`}
-          >
-            <DatePickerWithRange date={date} setDate={setDate} />
-          </div>
+
+          <DatePickerWithRange date={date} setDate={setDate} />
         </div>
         {isLoading ? (
           <Loader />

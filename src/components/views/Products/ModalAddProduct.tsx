@@ -106,7 +106,7 @@ function ProfileForm({
   }>({
     defaultValues: {
       name: "",
-      price: 10000,
+      price: 1000,
       discountPrice: undefined,
       discountQuantity: undefined,
     },

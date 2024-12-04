@@ -8,6 +8,7 @@ import ThemeProvider from "@/components/Providers/ThemeProvider";
 
 import QueryClientProvider from "@/components/Providers/QueryClientProvider";
 import { Toaster } from "@/components/ui/sonner";
+import ButtonScrollTop from "../components/ui/button-to-top";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,16 +28,13 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html
-      lang="en"
-      className="light scroll-smooth"
-      style={{ colorScheme: "light" }}
-    >
+    <html lang="en" className="light" style={{ colorScheme: "light" }}>
       <body className={inter.className}>
         <SessionProvider session={session}>
           <QueryClientProvider>
             <ThemeProvider>
               {children}
+              <ButtonScrollTop />
               <Toaster theme="light" position="top-center" />
             </ThemeProvider>
           </QueryClientProvider>

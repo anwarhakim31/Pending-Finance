@@ -123,6 +123,10 @@ function ProfileForm({
   const { data, isLoading } = useFetchProduct();
   const [autoClose, setAutoClose] = React.useState(true);
 
+  React.useEffect(() => {
+    form.setValue("date", new Date());
+  }, []);
+
   const onSubmit = (value: Record) => {
     mutate(value, {
       onSuccess: (res) => {
@@ -183,7 +187,10 @@ function ProfileForm({
         <FormField
           control={form.control}
           name="quantity"
-          rules={{ required: "Jumlah tidak boleh kosong." }}
+          rules={{
+            required: "Jumlah tidak boleh kosong.",
+            min: { value: 1, message: "Jumlah minimal 1" },
+          }}
           render={({ field }) => (
             <FormItem className="flex flex-col ">
               <FormLabel>Jumlah barang dijual</FormLabel>

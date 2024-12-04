@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useFetchGroupData = (id: string) => {
   return useQuery({
-    queryKey: ["groupData"],
+    queryKey: ["groupData", id],
     queryFn: async () => {
       const res = await instance.get("/records/" + id);
 

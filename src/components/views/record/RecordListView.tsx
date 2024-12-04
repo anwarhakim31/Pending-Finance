@@ -31,7 +31,7 @@ const RecordListView = ({
             <ModalOneDelete
               id={(record?.id as string) || ""}
               url={`/records/${id}`}
-              keys={["groupData", "dateGroup", "statistic"]}
+              keys={["statistic", "dateGroup", "groupData"]}
             />
             <ModalEditRecord data={record} />
           </div>

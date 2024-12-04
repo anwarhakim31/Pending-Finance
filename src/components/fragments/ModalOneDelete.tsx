@@ -12,6 +12,7 @@ import {
 import useDeleteOne from "@/hooks/useDeleteOne";
 
 import { Trash } from "lucide-react";
+import { useState } from "react";
 
 export function ModalOneDelete({
   id,
@@ -22,6 +23,7 @@ export function ModalOneDelete({
   url: string;
   keys: string[];
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   const { mutate, isPending } = useDeleteOne(id, url, keys);
 
   const handleDelete = () => {
@@ -29,11 +31,12 @@ export function ModalOneDelete({
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
         <button
           type="button"
           title="Hapus "
+          onClick={() => setIsOpen(true)}
           className="w-7 h-7 border border-gray-300 rounded-full flex-center hover:border-red-400   dark:border-gray-600"
         >
           <Trash size={14} className=" text-red-600 " />

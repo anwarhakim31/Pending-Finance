@@ -18,19 +18,28 @@ import useDeleteRecordHistory from "@/hooks/record/useDeleteRecordHistory";
 import { toast } from "sonner";
 import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 
-export function ModalDeleteHistory({ dataCheck }: { dataCheck: string[] }) {
+export function ModalDeleteHistory({
+  dataCheck,
+  setDataCheck,
+}: {
+  dataCheck: string[];
+  setDataCheck: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
   const { mutate, isPending } = useDeleteRecordHistory();
   const query = useQueryClient();
 
   const handleDelete = () => {
     mutate(dataCheck, {
-      onSuccess: () => toast.success("Berhasil menghapus data terpilih"),
+      onSuccess: () => {
+        query.invalidateQueries({ queryKey: ["history"] });
+        query.invalidateQueries({ queryKey: ["statistic"] });
+        query.invalidateQueries({ queryKey: ["groupData"] });
+        query.invalidateQueries({ queryKey: ["dateGroup"] });
+        toast.success("Riwayat berhasil dihapus");
+        setDataCheck([]);
+      },
       onError: (error: Error) => ResponseErrorAxios(error as Error),
     });
-    query.invalidateQueries({ queryKey: ["groupData"] });
-    query.invalidateQueries({ queryKey: ["statistic"] });
-    query.invalidateQueries({ queryKey: ["dateGroup"] });
-    query.invalidateQueries({ queryKey: ["recordHistory"] });
   };
 
   return (

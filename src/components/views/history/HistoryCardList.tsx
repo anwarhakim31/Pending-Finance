@@ -57,7 +57,7 @@ const HistoryCardList = ({
         <ModalOneDelete
           id={item.id || ""}
           url={`/records/history`}
-          keys={["recordHistory", "records", "dateGroup"]}
+          keys={["history", "statistic", "dateGroup"]}
         />
       </div>
     </div>

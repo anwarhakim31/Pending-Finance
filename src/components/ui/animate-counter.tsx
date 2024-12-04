@@ -6,8 +6,8 @@ const AnimateCounter = ({ value, type }: { value: number; type: string }) => {
 
   useEffect(() => {
     let start = 0;
-    const duration = 300;
-    const increment = Math.ceil(value / (duration / 16.7));
+    const duration = 100;
+    const increment = Math.ceil(value / (duration / 10));
 
     const animate = () => {
       start += increment;

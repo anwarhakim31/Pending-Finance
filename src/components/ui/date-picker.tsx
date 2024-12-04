@@ -43,6 +43,7 @@ export function DatePicker({ field }: { field: FieldValues }) {
         <Calendar
           mode="single"
           selected={field.value}
+          defaultMonth={field.value}
           onSelect={(date) => {
             field.onChange(date);
             setIsOpen(false);

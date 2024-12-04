@@ -13,7 +13,7 @@ const useDeleteOneProduct = (id: string, url: string, queryKeys: string[]) => {
     onSuccess: () => {
       toast.success("Berhasil menghapus data");
       queryKeys.forEach((key) => {
-        query.invalidateQueries({ queryKey: [key] });
+        query.refetchQueries({ queryKey: [key] });
       });
     },
     onError: (error: Error) => {

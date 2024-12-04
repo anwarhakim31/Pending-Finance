@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       const product = await prisma.products.create({
         data: {
           name: name,
-          price: price,
+          price: parseInt(price),
           userId: token.id as string,
           discountPrice: parseInt(discountPrice),
           discountQuantity: parseInt(discountQuantity),
@@ -59,13 +59,15 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "2");
+    console.log(search, page, limit);
 
     if (typeof token === "object" && "id" in token) {
       const product = await prisma.products.findMany({
         where: {
           userId: token.id as string,
           name: {
-            contains: search,
+            contains: search.trim().toLowerCase(),
+            mode: "insensitive",
           },
         },
         orderBy: {
@@ -129,7 +131,7 @@ export async function PATCH(req: NextRequest) {
       },
       data: {
         name: name,
-        price: price,
+        price: parseInt(price),
         discountPrice: parseInt(discountPrice),
         discountQuantity: parseInt(discountQuantity),
       },

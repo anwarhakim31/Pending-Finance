@@ -12,13 +12,15 @@ export async function GET(req: NextRequest) {
       const limit = parseInt(req.nextUrl.searchParams.get("limit") || "20");
       const fromDate = req.nextUrl.searchParams.get("from");
       const toDate = req.nextUrl.searchParams.get("to");
+      const first = new Date(fromDate || new Date()).setHours(0, 0, 0, 0);
+      const last = new Date(toDate || new Date()).setHours(23, 59, 59, 999);
 
       const records = await prisma.records.findMany({
         where: {
           userId: token.id as string,
           date: {
-            gte: fromDate ? new Date(fromDate) : undefined,
-            lte: toDate ? new Date(toDate) : undefined,
+            gte: fromDate ? new Date(first) : undefined,
+            lte: toDate ? new Date(last) : undefined,
           },
         },
         orderBy: {

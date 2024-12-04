@@ -24,7 +24,10 @@ const ProductCardList = ({ product }: { product: Products }) => {
           </span>
           :{" "}
           {product.discountPrice
-            ? product.discountPrice + " - " + product.discountQuantity + " Pcs"
+            ? formatCurrency(product.discountPrice) +
+              " - " +
+              product.discountQuantity +
+              " Pcs"
             : "-"}
         </p>
         <div className="absolute top-0 right-1 flex gap-2">

@@ -14,8 +14,10 @@ import { Record } from "@/types/model";
 import Image from "next/image";
 import wa from "@/assets/wa.svg";
 import { recordTexMap } from "@/utils/mapping";
+import { useSession } from "next-auth/react";
 
 const MainRecordView = ({ id }: { id: string }) => {
+  const session = useSession();
   const { data, isError, isLoading, isFetching } = useFetchGroupData(id);
   const router = useRouter();
 
@@ -34,11 +36,13 @@ const MainRecordView = ({ id }: { id: string }) => {
   const handleSendWhatsapp = (data: {
     data: { totalIncome: number; date: string; record: Record[] };
   }) => {
+    if (!session.data?.user?.phone)
+      toast.error("Nomor telepon belum ditambakan di halaman profile");
     const message = recordTexMap(data);
 
-    const url = `https://wa.me/6281319981546?text=${encodeURIComponent(
-      message
-    )}`;
+    const url = `https://wa.me/${
+      session.data?.user?.phone
+    }?text=${encodeURIComponent(message)}`;
 
     window.open(url, "_blank");
   };

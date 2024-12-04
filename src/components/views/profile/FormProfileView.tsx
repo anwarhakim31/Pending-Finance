@@ -70,9 +70,11 @@ const FormProfileView = ({
   };
 
   const onSubmit = (data: User) => {
+    if (!form.watch("phone")?.startsWith("62"))
+      form.setError("phone", { message: "Whatsapp harus dimulai dengan 62" });
+
     mutateProfile(data, {
       onSuccess: (values) => {
-        console.log(values);
         setIsProfile(false);
         toast.success("Berhasil mengganti data profil");
         session.update({ ...session.data, user: values.data });
@@ -157,24 +159,26 @@ const FormProfileView = ({
               },
             }}
             render={({ field }) => (
-              <FormItem className=" flex items-center">
-                <FormLabel className="flex-shrink-0 mt-2.5 w-24">
-                  Nama Lengkap
-                </FormLabel>
+              <FormItem>
+                <div className=" flex items-center">
+                  <FormLabel className="flex-shrink-0 mt-2.5 w-24">
+                    Nama Lengkap
+                  </FormLabel>
 
-                <FormControl>
-                  <Input
-                    placeholder=""
-                    {...field}
-                    autoComplete="off"
-                    type="text"
-                    className={`${
-                      isProfile
-                        ? " border-gray-400 "
-                        : "border-white shadow-none"
-                    }`}
-                  />
-                </FormControl>
+                  <FormControl>
+                    <Input
+                      placeholder=""
+                      {...field}
+                      autoComplete="off"
+                      type="text"
+                      className={`${
+                        isProfile
+                          ? " border-gray-400 "
+                          : "border-white shadow-none"
+                      }`}
+                    />
+                  </FormControl>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -236,7 +240,7 @@ const FormProfileView = ({
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="08xxxxxxxxxx"
+                      placeholder="62xxxxxxxxxx"
                       {...field}
                       type="text"
                       autoComplete="off"

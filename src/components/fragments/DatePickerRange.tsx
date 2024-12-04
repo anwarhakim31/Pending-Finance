@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { id } from "date-fns/locale";
@@ -51,15 +51,14 @@ export function DatePickerWithRange({
                 format(date.from, "LLL dd, y", { locale: id })
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Pilih tanggal</span>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 overflow-y-auto" align="start">
           <Calendar
-            initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={date?.to || subMonths(new Date(), 1)}
             selected={date}
             onSelect={handleSelect}
             numberOfMonths={2}

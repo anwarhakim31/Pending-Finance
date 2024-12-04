@@ -147,7 +147,10 @@ function ProfileForm({
           <FormField
             control={form.control}
             name="total"
-            rules={{ required: "Total tidak boleh kosong." }}
+            rules={{
+              required: "Total tidak boleh kosong.",
+              min: { value: 1, message: "Minimal total adalah 1" },
+            }}
             render={({ field }) => (
               <FormItem className="flex flex-col ">
                 <FormLabel>Total Diterima</FormLabel>

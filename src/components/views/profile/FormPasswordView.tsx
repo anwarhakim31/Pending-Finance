@@ -83,7 +83,7 @@ const FormPasswordView = ({
           render={({ field }) => (
             <FormItem className=" ">
               <div className=" flex items-center">
-                <FormLabel className="flex-shrink-0 mt-2.5 w-24">
+                <FormLabel className="flex-shrink-0  w-24">
                   Password Lama
                 </FormLabel>
 
@@ -122,7 +122,7 @@ const FormPasswordView = ({
           render={({ field }) => (
             <FormItem>
               <div className=" flex items-center">
-                <FormLabel className="flex-shrink-0 mt-1 w-24">
+                <FormLabel className="flex-shrink-0  w-24">
                   Password Baru
                 </FormLabel>
                 <FormControl>

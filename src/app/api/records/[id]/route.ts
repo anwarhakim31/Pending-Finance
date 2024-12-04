@@ -73,57 +73,67 @@ export async function PATCH(
     const recordId = params.params.id;
     const { quantity, product: productName } = await req.json();
 
-    if (token instanceof NextResponse) {
-      return token;
+    if (token && typeof token === "object" && "id" in token) {
+      const productDB = await prisma.products.findFirst({
+        where: {
+          name: productName,
+          userId: token.id,
+        },
+      });
+
+      if (!productDB) {
+        return ResponseError("Data tidak ditemukan", 400);
+      }
+
+      console.log(productDB, quantity);
+
+      let total = 0;
+
+      if (productDB.discountQuantity && productDB.discountPrice) {
+        const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
+
+        const qtyNotDiscount =
+          quantity - qtyDiscount * productDB.discountQuantity;
+
+        total =
+          qtyNotDiscount * productDB.price +
+          qtyDiscount * productDB.discountPrice;
+      } else {
+        total = productDB.price * parseInt(quantity);
+      }
+
+      await prisma.records.update({
+        where: {
+          id: recordId,
+        },
+        data: {
+          quantity: parseInt(quantity),
+          total: total,
+        },
+      });
+
+      return NextResponse.json({
+        status: 200,
+        success: true,
+        message: "Berhasil merubah data catatan.",
+      });
     }
 
-    const product = await prisma.products.findFirst({
-      where: {
-        name: productName,
-      },
-    });
-
-    if (!product) {
-      return ResponseError("Data tidak ditemukan", 400);
-    }
-
-    const totalPrice = product.price * parseInt(quantity);
-
-    const totalPriceDiscount =
-      Number(product.discountQuantity) && Number(product.discountPrice)
-        ? (parseInt(quantity) % Number(product.discountQuantity)) *
-          Number(product.discountPrice)
-        : 0;
-
-    const total = product.discountPrice
-      ? totalPrice - totalPriceDiscount
-      : totalPrice;
-
-    await prisma.records.update({
-      where: {
-        id: recordId,
-      },
-      data: {
-        quantity: parseInt(quantity),
-        total: total,
-      },
-    });
-
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      message: "Berhasil merubah data catatan.",
-    });
+    return ResponseError("Unauthorized", 401);
   } catch (error) {
     console.log(error);
     return ResponseError("Internal Server Error", 500);
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(
+  req: NextRequest,
+  params: { params: { id: string } }
+) {
   const token = await verifyToken(req);
   try {
-    const recordId = req.nextUrl.searchParams.get("id");
+    const groupId = params.params.id;
+    const recordId = req.nextUrl.searchParams.get("id") || "";
 
     if (!recordId) {
       return ResponseError("ID catatan tidak ditemukan.", 400);
@@ -133,7 +143,10 @@ export async function DELETE(req: NextRequest) {
       return token;
     }
     const existingRecord = await prisma.records.findUnique({
-      where: { id: recordId },
+      where: {
+        id: recordId,
+        groupId: groupId,
+      },
     });
 
     if (!existingRecord) {

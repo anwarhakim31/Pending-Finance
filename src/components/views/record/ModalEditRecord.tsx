@@ -112,6 +112,7 @@ function ProfileForm({
       onSuccess: (data) => {
         toast.success(data.message);
         query.invalidateQueries({ queryKey: ["groupData"] });
+        query.invalidateQueries({ queryKey: ["statistic"] });
         setOpen(false);
       },
       onError: (error) => {
@@ -129,7 +130,13 @@ function ProfileForm({
         <FormField
           control={form.control}
           name="quantity"
-          rules={{ required: "Harga Satuan tidak boleh kosong." }}
+          rules={{
+            required: "Jumlah tidak boleh kosong.",
+            min: {
+              value: 1,
+              message: "Jumlah tidak boleh kurang dari 1.",
+            },
+          }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Jumlah yang dijual</FormLabel>

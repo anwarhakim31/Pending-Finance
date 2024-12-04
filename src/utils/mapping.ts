@@ -7,7 +7,7 @@ export const recordTexMap = (data: {
   return `Catatan ${formatDateId(
     data?.data?.date || ""
   )}\n${data?.data?.record.map((item: Record, i: number) => {
-    return `\n${i + 1} .${item.product} : ${
+    return `\n${i + 1}. ${item.product} : ${
       item.quantity
     } pcs = ${formatCurrency(item.total || 0)}`;
   })}\n\n${
@@ -23,56 +23,30 @@ export const recordTexMap = (data: {
 };
 
 export const historyMap = (data: Record[]) => {
-  return data.reduce(
-    (acc: { date: string; type: string; data: Record[] }[], item: Record) => {
-      const last = acc[acc.length - 1];
+  const groupedData = new Map<
+    string,
+    { date: string; type: string; data: Record[] }
+  >();
 
-      if (item.type === "income") {
-        if (acc.length > 0 && last.type === "income") {
-          if (
-            new Date(last.date || "").toDateString() ===
-            new Date(item.createdAt || "").toDateString()
-          ) {
-            last.data.push(item);
-          } else {
-            acc.push({
-              date: new Date(item.createdAt || "").toDateString(),
-              type: "income",
-              data: [item],
-            });
-          }
-        } else {
-          acc.push({
-            date: new Date(item.createdAt || "").toDateString(),
-            type: "income",
-            data: [item],
-          });
-        }
-      } else {
-        if (acc.length > 0 && last.type === "receive") {
-          if (
-            new Date(last.date || "").toDateString() ===
-            new Date(item.createdAt || "").toDateString()
-          ) {
-            last.data.push(item);
-          } else {
-            acc.push({
-              date: new Date(item.createdAt || "").toDateString(),
-              type: "receive",
-              data: [item],
-            });
-          }
-        } else {
-          acc.push({
-            date: new Date(item.createdAt || "").toDateString(),
-            type: "receive",
-            data: [item],
-          });
-        }
-      }
-      return acc;
-    },
-    []
+  data.forEach((item) => {
+    const key = `${item.type}-${new Date(item.date || "").toDateString()}`;
+    const existingEntry = groupedData.get(key);
+
+    if (existingEntry) {
+      // Jika key sudah ada, tambahkan item ke dalam data
+      existingEntry.data.push(item);
+    } else {
+      // Jika belum ada, tambahkan entri baru
+      groupedData.set(key, {
+        date: new Date(item.date || "").toDateString(),
+        type: item.type || "",
+        data: [item],
+      });
+    }
+  });
+
+  return Array.from(groupedData.values()).sort((a, b) =>
+    a.date.localeCompare(b.date)
   );
 };
 
@@ -96,7 +70,7 @@ export const historyTextMap = (
                       (acc, item) => acc + (Number(item.total) || 0),
                       0
                     )
-                  )}\n`
+                  )}`
                 : ``
             }`
           : `${
@@ -110,19 +84,39 @@ export const historyTextMap = (
     }
   )}\n===================\nTotal Sudah Diterima : ${formatCurrency(
     remap
-      .filter((item) => item.type === "receive")
-      .reduce((acc, item) => acc + Number(item.data[0]?.total || 0), 0)
+      .filter((item) => (item.type === "receive" ? item : null))
+      .reduce(
+        (total, item) =>
+          total +
+          item.data.reduce((acc, item) => acc + Number(item.total || 0), 0),
+        0
+      )
   )}\nTotal Pendapatan : ${formatCurrency(
     remap
-      .filter((item) => item.type === "income")
-      .reduce((acc, item) => acc + Number(item.data[0]?.total || 0), 0)
+      .filter((item) => (item.type === "income" ? item : null))
+      .reduce(
+        (total, item) =>
+          total +
+          item.data.reduce((acc, item) => acc + Number(item.total || 0), 0),
+        0
+      )
   )}\nTotal Belum Diterima: ${formatCurrency(
     remap
-      .filter((item) => item.type === "receive")
-      .reduce((acc, item) => acc + Number(item.data[0]?.total || 0), 0) -
+      .filter((item) => (item.type === "income" ? item : null))
+      .reduce(
+        (total, item) =>
+          total +
+          item.data.reduce((acc, item) => acc + Number(item.total || 0), 0),
+        0
+      ) -
       remap
-        .filter((item) => item.type === "receive")
-        .reduce((acc, item) => acc + Number(item.data[0]?.total || 0), 0)
+        .filter((item) => (item.type === "receive" ? item : null))
+        .reduce(
+          (total, item) =>
+            total +
+            item.data.reduce((acc, item) => acc + Number(item.total || 0), 0),
+          0
+        )
   )}\n
   `;
 };

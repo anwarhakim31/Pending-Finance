@@ -8,22 +8,16 @@ const useFetchRecordHistory = (
   dateTo: Date
 ) => {
   return useQuery({
-    queryKey: ["recordHistory" + page + pageSize, dateFrom, dateTo],
+    queryKey: ["history", { page, pageSize, dateFrom, dateTo }],
     queryFn: async () => {
       const res = await instance.get(
-        "/records/history?page=" +
-          page +
-          "&limit=" +
-          pageSize +
-          "&from=" +
-          dateFrom +
-          "&to=" +
-          dateTo
+        "/records/history?page=" + "&from=" + dateFrom + "&to=" + dateTo
       );
       return res.data;
     },
     staleTime: 1000 * 60 * 5,
     placeholderData: (oldData) => oldData,
+    enabled: !!dateFrom && !!dateTo,
   });
 };
 
