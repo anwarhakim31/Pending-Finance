@@ -18,6 +18,9 @@ import { User } from "@/types/model";
 import useUpadateProfile from "@/hooks/profile/useUpadateProfile";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { AxiosError } from "axios";
+import { ALLOWED_FILE_TYPES } from "@/utils/constant";
+import { Badge } from "@/components/ui/badge";
 
 const FormProfileView = ({
   isProfile,
@@ -35,9 +38,10 @@ const FormProfileView = ({
       phone: session.data?.user?.phone || "",
     },
   });
-
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = React.useState(0);
+  const [isError, setIsError] = React.useState(false);
+
   const { mutate: mutatePhoto, isPending: isPendingPhoto } = usePostPhoto(
     (value) => setProgress(value)
   );
@@ -47,10 +51,16 @@ const FormProfileView = ({
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
+    if (!ALLOWED_FILE_TYPES.includes(file?.type || "")) {
+      setIsError(true);
+      return;
+    }
+
     if (file) {
       mutatePhoto(file, {
         onSuccess: (data) => {
           form.setValue("photo", data.url);
+          setIsError(false);
         },
         onError: (error) => ResponseErrorAxios(error as Error),
       });
@@ -64,10 +74,18 @@ const FormProfileView = ({
       onSuccess: (values) => {
         console.log(values);
         setIsProfile(false);
-        toast.success("Berhasil mengubah data");
+        toast.success("Berhasil mengganti data profil");
         session.update({ ...session.data, user: values.data });
       },
-      onError: (error) => ResponseErrorAxios(error as Error),
+      onError: (error) => {
+        if (
+          error instanceof AxiosError &&
+          error?.response?.data &&
+          error?.response?.data.message
+        ) {
+          form.setError("fullname", { message: error?.response?.data.message });
+        }
+      },
     });
   };
 
@@ -106,11 +124,25 @@ const FormProfileView = ({
           disabled={!isProfile}
           onChange={handleChangeImage}
         />
+
+        <small
+          className={`${
+            isProfile ? "opacity-100" : "pointer-events-none opacity-0"
+          } text-xs text-muted-foreground mt-1`}
+        >
+          Format file PNG, JPEG, JPG.
+        </small>
+
+        {isError && (
+          <Badge variant="destructive" className="mt-1" title="">
+            Format File tidak sesuai.
+          </Badge>
+        )}
       </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={`w-full flex flex-col gap-4 mt-4 ${
+          className={`w-full flex flex-col gap-4 mt-2 ${
             isProfile ? "pointer-events-auto" : "pointer-events-none"
           }`}
         >
@@ -204,7 +236,7 @@ const FormProfileView = ({
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder=""
+                      placeholder="08xxxxxxxxxx"
                       {...field}
                       type="text"
                       autoComplete="off"
