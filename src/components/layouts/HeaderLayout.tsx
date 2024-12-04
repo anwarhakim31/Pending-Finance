@@ -5,8 +5,11 @@ import { Avatar } from "../ui/avatar";
 import Image from "next/image";
 import Link from "next/link";
 import { ThemeSwitcher } from "../ui/theme-switcher";
+import { useSession } from "next-auth/react";
 
 const HeaderLayout = () => {
+  const session = useSession();
+
   return (
     <header
       className={`absolute z-[10] top-0 left-0 w-full   dark:bg-black py-2 `}
@@ -22,10 +25,11 @@ const HeaderLayout = () => {
           >
             <Avatar className="w-8 h-8 bg-gray-200 dark:bg-black ">
               <Image
-                src={"/user.png"}
+                src={session.data?.user?.photo || "/images/avatar.png"}
                 alt="user"
                 width={40}
                 height={40}
+                className="rounded-full object-cover w-full h-full object-center  "
                 priority
               />
             </Avatar>

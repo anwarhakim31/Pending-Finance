@@ -11,6 +11,7 @@ declare module "next-auth" {
     password?: string;
     photo?: string;
     store?: string;
+    phone?: string;
   }
 
   interface Session {
@@ -20,6 +21,7 @@ declare module "next-auth" {
       photo?: string;
       store?: string;
       accessToken?: string;
+      phone?: string;
     };
   }
 
@@ -86,6 +88,7 @@ export const authOptions: NextAuthOptions = {
         token.fullname = user.fullname;
         token.photo = user.photo as string;
         token.store = user.store as string;
+        token.phone = user.phone as string;
       }
 
       if (trigger === "update" && session) {
@@ -93,6 +96,7 @@ export const authOptions: NextAuthOptions = {
         token.fullname = session.user?.fullname as string;
         token.photo = session.user?.photo as string;
         token.store = session.user?.store as string;
+        token.phone = session.user?.phone as string;
       }
 
       return token;
@@ -103,6 +107,7 @@ export const authOptions: NextAuthOptions = {
         session.user.fullname = (token.fullname as string) || "";
         session.user.photo = (token.photo as string) || "";
         session.user.store = (token.store as string) || "";
+        session.user.phone = (token.phone as string) || "";
 
         const accessToken = jwt.sign(token, process.env.NEXTAUTH_SECRET || "", {
           algorithm: "HS256",
