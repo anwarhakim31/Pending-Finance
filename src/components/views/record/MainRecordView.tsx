@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency, formatDateId } from "@/utils/helpers";
+import { formatDateId } from "@/utils/helpers";
 import useFetchGroupData from "@/hooks/record/useFetchGroupData";
 import { Boxes, CircleDollarSign, Copy } from "lucide-react";
 import React, { useEffect } from "react";
@@ -13,6 +13,7 @@ import RecordListView from "./RecordListView";
 import { Record } from "@/types/model";
 import Image from "next/image";
 import wa from "@/assets/wa.svg";
+import { recordTexMap } from "@/utils/mapping";
 
 const MainRecordView = ({ id }: { id: string }) => {
   const { data, isError, isLoading, isFetching } = useFetchGroupData(id);
@@ -29,6 +30,26 @@ const MainRecordView = ({ id }: { id: string }) => {
       router.push("/dashboard");
     }
   }, [isLoading, data?.data?.record?.length, router, isFetching]);
+
+  const handleSendWhatsapp = (data: {
+    data: { totalIncome: number; date: string; record: Record[] };
+  }) => {
+    const message = recordTexMap(data);
+
+    const url = `https://wa.me/6281319981546?text=${encodeURIComponent(
+      message
+    )}`;
+
+    window.open(url, "_blank");
+  };
+
+  const handleCopyText = (data: {
+    data: { totalIncome: number; date: string; record: Record[] };
+  }) => {
+    navigator.clipboard.writeText(recordTexMap(data)).then(() => {
+      toast.success("Catatan berhasil disalin");
+    });
+  };
 
   return (
     <main>
@@ -58,7 +79,7 @@ const MainRecordView = ({ id }: { id: string }) => {
             </button>
             <button
               aria-label="copy"
-              title="Salin Catatan"
+              title="Kirim Whatsapp"
               type="button"
               onClick={() => handleCopyText(data)}
               className="flex-center gap-2 w-8 h-8 rounded-md bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
@@ -115,47 +136,6 @@ const MainRecordView = ({ id }: { id: string }) => {
       </section>
     </main>
   );
-};
-
-const handleSendWhatsapp = (data: {
-  data: { totalIncome: number; date: string; record: Record[] };
-}) => {
-  const message = `Catatan Penjualan Tanggal : ${formatDateId(
-    data?.data?.date || ""
-  )}\n\n${data?.data?.record.map((item: Record, i: number) => {
-    return `${i + 1}. ${item.product} : ${
-      item.quantity
-    } pcs => Total Harga : ${formatCurrency(item.total || 0)}`;
-  })}\n\n${
-    data.data.totalIncome ? `Total Keseluruhan : ${data.data.totalIncome}` : 0
-  }`;
-
-  const url = `https://wa.me/6281319981546?text=${encodeURIComponent(message)}`;
-
-  window.open(url, "_blank");
-};
-
-const handleCopyText = (data: {
-  data: { totalIncome: number; date: string; record: Record[] };
-}) => {
-  navigator.clipboard
-    .writeText(
-      `Catatan Penjualan Tanggal : ${formatDateId(
-        data?.data?.date || ""
-      )}\n\n${data?.data?.record.map((item: Record, i: number) => {
-        return `${i + 1}. ${item.product} : ${
-          item.quantity
-        } pcs => Total Harga : ${formatCurrency(item.total || 0)}`;
-      })}\n\n${
-        data.data.totalIncome
-          ? `Total Keseluruhan : ${data.data.totalIncome}`
-          : 0
-      }
-        `
-    )
-    .then(() => {
-      toast.success("Catatan berhasil disalin");
-    });
 };
 
 export default MainRecordView;

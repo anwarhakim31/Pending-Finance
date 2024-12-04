@@ -116,6 +116,7 @@ function ProfileForm({
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["statistic"] });
+        query.invalidateQueries({ queryKey: ["recordHistory"] });
         toast.success(res.message);
         setOpen(false);
       },
