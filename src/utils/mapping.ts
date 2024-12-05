@@ -4,13 +4,13 @@ import { formatDateId, formatCurrency } from "./helpers";
 export const recordTexMap = (data: {
   data: { totalIncome: number; date: string; record: Record[] };
 }) => {
-  return `Catatan ${formatDateId(
-    data?.data?.date || ""
-  )}\n${data?.data?.record.map((item: Record, i: number) => {
-    return `\n${i + 1}. ${item.product} : ${
-      item.quantity
-    } pcs = ${formatCurrency(item.total || 0)}`;
-  })}\n\n${
+  return `Catatan ${formatDateId(data?.data?.date)}\n${data?.data?.record.map(
+    (item: Record, i: number) => {
+      return `\n${i + 1}. ${item.product} : ${
+        item.quantity
+      } pcs = ${formatCurrency(item.total || 0)}`;
+    }
+  )}\n\n${
     data.data.totalIncome
       ? `Total : ${formatCurrency(
           data.data.record.reduce(

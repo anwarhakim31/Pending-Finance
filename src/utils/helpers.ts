@@ -31,7 +31,9 @@ export const formatToday = (date: Date = new Date()) => {
 };
 
 export const formatDateId = (date: string) => {
-  return new Date(date).toLocaleDateString("id-ID", {
+  const utcDate = new Date(date);
+  return utcDate.toLocaleDateString("id-ID", {
+    timeZone: "UTC",
     day: "2-digit",
     month: "long",
     year: "numeric",
