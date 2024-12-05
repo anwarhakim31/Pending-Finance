@@ -22,13 +22,13 @@ Before you begin, ensure you have the following installed on your machine:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/anwarhakim31/vshop-React.git
+   git clone https://github.com/anwarhakim31/Pending-Finance.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd vshop-react
+   cd Pending-Finance
    
    ```
 
@@ -42,20 +42,19 @@ Before you begin, ensure you have the following installed on your machine:
 
 1. Create a .env file in the root of your project.
 
-   ```env
+   ```bash
    
-DATABASE_URL =
-
-NEXTAUTH_SECRET = 
-
-NEXTAUTH_URL=
-
-NEXT_PUBLIC_API_URL = 
-
-NEXT_PUBLIC_CLOUD_PRESET =
-
-NEXT_PUBLIC_CLOUD_NAME = 
-
+    DATABASE_URL =
+    
+    NEXTAUTH_SECRET = 
+    
+    NEXTAUTH_URL=
+    
+    NEXT_PUBLIC_API_URL = 
+    
+    NEXT_PUBLIC_CLOUD_PRESET =
+    
+    NEXT_PUBLIC_CLOUD_NAME = 
    ```
 
 ## Development
