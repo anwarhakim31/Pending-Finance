@@ -4,8 +4,12 @@ project that aims to manage income and receipts for recording financial transact
 
 ## TeckStack
 
-
-
+- NextJs
+- Shadcn/ui
+- mongooDB
+- Docker
+- NextAuth
+  
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your machine:
