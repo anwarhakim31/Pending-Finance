@@ -24,7 +24,6 @@ export function DatePickerWithRange({
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
 }) {
   const handleSelect = (range: DateRange | undefined) => {
-    console.log(range);
     setDate(range);
   };
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,6 +15,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -60,6 +62,7 @@ export function ModalAddProduct({ isLoading }: { isLoading: boolean }) {
           <DialogHeader>
             <DialogTitle>Tambah Barang</DialogTitle>
           </DialogHeader>
+          <DialogDescription />
           <ProfileForm setOpen={setOpen} />
         </DialogContent>
       </Dialog>
@@ -80,6 +83,7 @@ export function ModalAddProduct({ isLoading }: { isLoading: boolean }) {
         <DrawerHeader className="text-left">
           <DrawerTitle>Tambah Barang</DrawerTitle>
         </DrawerHeader>
+        <DrawerDescription />
         <ProfileForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
@@ -165,7 +169,12 @@ function ProfileForm({
             <FormItem>
               <FormLabel>Nama Barang</FormLabel>
               <FormControl>
-                <Input placeholder="Makanan" {...field} autoComplete="off" />
+                <Input
+                  placeholder="Makanan"
+                  type="text"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

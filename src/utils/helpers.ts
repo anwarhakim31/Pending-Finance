@@ -38,13 +38,6 @@ export const formatDateId = (date: string) => {
   });
 };
 
-export function convertBigIntToJSON(obj: { [key: string]: bigint }) {
-  return JSON.parse(
-    JSON.stringify(obj, (_, value) =>
-      typeof value === "bigint" ? value.toString() : value
-    )
-  );
-}
 export const convertToJakartaTime = (date = new Date()) => {
   const dates = new Date(date).setDate(date.getDate() + 1);
   return new Date(dates);

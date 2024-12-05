@@ -31,10 +31,8 @@ export function ModalDeleteHistory({
   const handleDelete = () => {
     mutate(dataCheck, {
       onSuccess: () => {
+        query.invalidateQueries({ queryKey: ["dashboard"] });
         query.invalidateQueries({ queryKey: ["history"] });
-        query.invalidateQueries({ queryKey: ["statistic"] });
-        query.invalidateQueries({ queryKey: ["groupData"] });
-        query.invalidateQueries({ queryKey: ["dateGroup"] });
         toast.success("Riwayat berhasil dihapus");
         setDataCheck([]);
       },

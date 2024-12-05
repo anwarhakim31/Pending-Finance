@@ -129,13 +129,23 @@ export async function PATCH(req: NextRequest) {
     const id = searchParams.get("id");
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
+    const data =
+      discountPrice && discountQuantity
+        ? {
+            name: name,
+            price: parseInt(price),
+            discountPrice: parseInt(discountPrice),
+            discountQuantity: parseInt(discountQuantity),
+          }
+        : {
+            name: name,
+            price: parseInt(price),
+          };
+
     const product = await Product.findByIdAndUpdate(
       { _id: id },
       {
-        name: name,
-        price: parseInt(price),
-        discountPrice: parseInt(discountPrice),
-        discountQuantity: parseInt(discountQuantity),
+        ...data,
       },
       { new: true }
     );

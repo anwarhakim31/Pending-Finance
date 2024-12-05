@@ -1,10 +1,12 @@
-import { prisma } from "@/lib/prisma";
+import connectDB from "@/lib/db";
+import GroupRecord from "@/lib/models/groupRecord-model";
+import Record from "@/lib/models/record-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
-import { convertBigIntToJSON } from "@/utils/helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
@@ -15,25 +17,19 @@ export async function GET(req: NextRequest) {
       const first = new Date(fromDate || new Date()).setHours(0, 0, 0, 0);
       const last = new Date(toDate || new Date()).setHours(23, 59, 59, 999);
 
-      const records = await prisma.records.findMany({
-        where: {
-          userId: token.id as string,
-          date: {
-            gte: fromDate ? new Date(first) : undefined,
-            lte: toDate ? new Date(last) : undefined,
-          },
+      const records = await Record.find({
+        userId: token.id as string,
+        date: {
+          $gte: fromDate ? new Date(first).toISOString() : undefined,
+          $lte: toDate ? new Date(last).toISOString() : undefined,
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+      })
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
 
-      const totalRecords = await prisma.records.count({
-        where: {
-          userId: token.id as string,
-        },
+      const totalRecords = await Record.countDocuments({
+        userId: token.id as string,
       });
 
       if (!records) {
@@ -43,11 +39,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         status: 200,
         success: true,
-        data: records?.map((record) => ({
-          ...record,
-          total: convertBigIntToJSON({ total: record.total || BigInt(0) })
-            ?.total,
-        })),
+        data: records,
         pagination: {
           page,
           limit,
@@ -64,17 +56,23 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
       const recordId = req.nextUrl.searchParams.get("id");
 
-      await prisma.records.delete({
-        where: {
-          userId: token.id as string,
-          id: recordId as string,
-        },
-      });
+      const record = await Record.findByIdAndDelete({ _id: recordId });
+      await GroupRecord.findByIdAndDelete(
+        { _id: record?.groupId },
+        {
+          $pull: {
+            records: {
+              _id: record?._id,
+            },
+          },
+        }
+      );
 
       return NextResponse.json({
         status: 200,
@@ -91,21 +89,23 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
       const { dataCheck } = await req.json();
 
-      console.log(dataCheck);
-
-      await prisma.records.deleteMany({
-        where: {
-          userId: token.id as string,
-          id: {
-            in: dataCheck.map((id: string) => id),
+      await Record.deleteMany({ _id: { $in: dataCheck } });
+      await GroupRecord.updateMany(
+        { records: { $in: dataCheck } },
+        {
+          $pull: {
+            records: {
+              $in: dataCheck,
+            },
           },
-        },
-      });
+        }
+      );
 
       return NextResponse.json({
         status: 200,

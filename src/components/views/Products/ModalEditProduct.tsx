@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,6 +16,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -58,6 +60,7 @@ export function ModalEditProduct({ data }: { data: Products }) {
           <DialogHeader>
             <DialogTitle>Edit Barang</DialogTitle>
           </DialogHeader>
+          <DialogDescription />
           <ProfileForm data={data} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
@@ -75,6 +78,7 @@ export function ModalEditProduct({ data }: { data: Products }) {
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit Barang</DrawerTitle>
         </DrawerHeader>
+        <DrawerDescription />
         <ProfileForm className="px-4" data={data} setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
@@ -114,7 +118,7 @@ function ProfileForm({
   const onSubmit = (data: Products) => {
     if (form.watch("discountPrice") && !form.watch("discountQuantity")) {
       return form.setError("discountQuantity", {
-        message: "Jumlah  tidak boleh kosong.",
+        message: "Jumlah tidak boleh kosong.",
       });
     }
 
@@ -162,7 +166,12 @@ function ProfileForm({
             <FormItem>
               <FormLabel>Nama Barang</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} autoComplete="off" />
+                <Input
+                  placeholder=""
+                  type="text"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -181,7 +190,6 @@ function ProfileForm({
                   {...field}
                   type="number"
                   min={0}
-                  step={1000}
                   max={100000000}
                   autoComplete="off"
                 />
@@ -195,10 +203,9 @@ function ProfileForm({
           <div className="flex gap-2">
             <FormField
               control={form.control}
-              rules={{ required: "Harga Satuan tidak boleh kosong." }}
               name="discountPrice"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>Harga Diskon</FormLabel>
                   <FormControl>
                     <InputCurrcency
@@ -208,6 +215,7 @@ function ProfileForm({
                       type="number"
                       min={0}
                       max={100000000}
+                      className="w-full"
                     />
                   </FormControl>
                   <FormMessage />
@@ -218,7 +226,7 @@ function ProfileForm({
               control={form.control}
               name="discountQuantity"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-1">
                   <FormLabel>Jumlah Diskon Barang</FormLabel>
                   <FormControl>
                     <Input
@@ -228,6 +236,7 @@ function ProfileForm({
                       min={0}
                       autoComplete="off"
                       max={100000000}
+                      className="w-full"
                     />
                   </FormControl>
                   <FormMessage />

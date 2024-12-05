@@ -161,7 +161,7 @@ const FormProfileView = ({
             render={({ field }) => (
               <FormItem>
                 <div className=" flex items-center">
-                  <FormLabel className="flex-shrink-0 mt-2.5 w-24">
+                  <FormLabel className="flex-shrink-0 mt-1 w-24">
                     Nama Lengkap
                   </FormLabel>
 
@@ -174,7 +174,7 @@ const FormProfileView = ({
                       className={`${
                         isProfile
                           ? " border-gray-400 "
-                          : "border-white shadow-none"
+                          : "border-white shadow-none focus:outline-none focus:ring-0 focus-within:ring-0 focus-within:outline-none"
                       }`}
                     />
                   </FormControl>
@@ -205,7 +205,7 @@ const FormProfileView = ({
                       className={`${
                         isProfile
                           ? " border-gray-400 "
-                          : "border-white shadow-none"
+                          : "border-white shadow-none focus:outline-none focus:ring-0 focus-within:ring-0 focus-within:outline-none"
                       }`}
                     />
                   </FormControl>
@@ -235,9 +235,7 @@ const FormProfileView = ({
             render={({ field }) => (
               <FormItem className=" ">
                 <div className="flex items-center">
-                  <FormLabel className="flex-shrink-0 mt-1 w-24">
-                    Whatsapp
-                  </FormLabel>
+                  <FormLabel className="flex-shrink-0 w-24">Whatsapp</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="62xxxxxxxxxx"
@@ -247,7 +245,7 @@ const FormProfileView = ({
                       className={`${
                         isProfile
                           ? " border-gray-400 "
-                          : "border-white shadow-none"
+                          : "border-white shadow-none focus:outline-none focus:ring-0 focus-within:ring-0 focus-within:outline-none"
                       }`}
                     />
                   </FormControl>
