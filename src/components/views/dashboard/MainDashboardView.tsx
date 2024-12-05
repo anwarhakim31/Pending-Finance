@@ -9,13 +9,17 @@ import {
 import React from "react";
 import { ModalRecordIncome } from "./ModalRecordIncome";
 import { ModalRecordReceive } from "./ModalRecordReceive";
-import useFetchStatistic from "@/hooks/record/useFetchStatistic";
+// import useFetchStatistic from "@/hooks/record/useFetchStatistic";
 import DateRecordView from "./DateRecordView";
 import { Meteors } from "@/components/ui/meteor";
 import AnimateCounter from "@/components/ui/animate-counter";
+import useFetchDashboard from "@/hooks/record/useFetchDashboard";
 
 const MainDashboardView = () => {
-  const { data, isLoading } = useFetchStatistic();
+  // const { data, isLoading } = useFetchStatistic();
+  const [month, setMonth] = React.useState(new Date());
+
+  const { data, isLoading } = useFetchDashboard(month);
 
   return (
     <main>
@@ -25,7 +29,7 @@ const MainDashboardView = () => {
             LosBlancos
           </h3>
           <BarChartComponent
-            data={data?.data?.chartStatistic}
+            data={data?.resStatistic?.data.chartStatistic}
             isLoading={isLoading}
           />
           <Meteors number={10} />
@@ -41,7 +45,7 @@ const MainDashboardView = () => {
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
                 <AnimateCounter
-                  value={data?.data?.totalReceive || 0}
+                  value={data?.resStatistic?.data.totalReceive || 0}
                   type="currency"
                 />
               </h1>
@@ -55,7 +59,7 @@ const MainDashboardView = () => {
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
                 <AnimateCounter
-                  value={data?.data?.totalPending || 0}
+                  value={data?.resStatistic?.data.totalPending || 0}
                   type="currency"
                 />
               </h1>
@@ -67,7 +71,7 @@ const MainDashboardView = () => {
               </div>
               <h1 className="text-sm font-normal text-gray-700 dark:text-white">
                 <AnimateCounter
-                  value={data?.data?.totalIncome || 0}
+                  value={data?.resStatistic?.data.totalIncome || 0}
                   type="currency"
                 />
               </h1>
@@ -81,7 +85,7 @@ const MainDashboardView = () => {
             <CalendarPlus size={20} strokeWidth={1.5} />
             <h3 className="text-xs text-normal  ">Riwayat terakhir ditambah</h3>
           </div>
-          <DateRecordView />
+          <DateRecordView data={data?.resGroup} setMonth={setMonth} />
         </div>
       </section>
     </main>

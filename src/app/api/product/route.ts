@@ -1,10 +1,12 @@
 // import { prisma } from "@/lib/prisma";
+import connectDB from "@/lib/db";
 import Product from "@/lib/models/product-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     const { name, price, discountPrice, discountQuantity } = await req.json();
@@ -76,6 +78,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     const { searchParams } = req.nextUrl;

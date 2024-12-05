@@ -1,13 +1,17 @@
 import { CalendarCustom } from "@/components/ui/CustomCalender";
-import useFetchDateGroup from "@/hooks/record/useFetchDateGroup";
+// import useFetchDateGroup from "@/hooks/record/useFetchDateGroup";
+// import { Record } from "@/types/model";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const DateRecordView = () => {
+const DateRecordView = ({
+  data,
+  setMonth,
+}: {
+  data: { data: { id: string; date: Date }[] };
+  setMonth: React.Dispatch<React.SetStateAction<Date>>;
+}) => {
   const router = useRouter();
-  const [month, setMonth] = React.useState(new Date());
-
-  const { data } = useFetchDateGroup(month);
 
   return (
     <CalendarCustom

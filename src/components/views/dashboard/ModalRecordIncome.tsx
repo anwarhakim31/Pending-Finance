@@ -130,8 +130,8 @@ function ProfileForm({
   const onSubmit = (value: Record) => {
     mutate(value, {
       onSuccess: (res) => {
-        query.invalidateQueries({ queryKey: ["statistic"] });
-        query.invalidateQueries({ queryKey: ["dateGroup"] });
+        query.invalidateQueries({ queryKey: ["dashboard"] });
+        // query.invalidateQueries({ queryKey: ["dateGroup"] });
         // query.invalidateQueries({ queryKey: ["recordHistory"] });
         toast.success(res.message);
         if (autoClose) {
