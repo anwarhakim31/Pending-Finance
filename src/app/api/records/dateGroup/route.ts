@@ -1,4 +1,5 @@
 // import { prisma } from "@/lib/prisma";
+import connectDB from "@/lib/db";
 import GroupRecord from "@/lib/models/groupRecord-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
@@ -6,6 +7,7 @@ import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     const { searchParams } = req.nextUrl;

@@ -4,20 +4,21 @@ import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import jwt from "jsonwebtoken";
 import User from "./models/user-model";
+import connectDB from "./db";
 
 declare module "next-auth" {
   interface User {
-    id?: string;
-    fullname?: string;
-    password?: string;
-    photo?: string;
-    store?: string;
-    phone?: string;
+    _id: string;
+    fullname: string;
+    password: string;
+    photo: string;
+    store: string;
+    phone: string;
   }
 
   interface Session {
     user?: {
-      id: string;
+      id?: string;
       fullname: string;
       photo?: string;
       store?: string;
@@ -52,14 +53,8 @@ export const authOptions: NextAuthOptions = {
           fullname: string;
           password: string;
         };
-
+        await connectDB();
         try {
-          // const user = await prisma.user.findFirst({
-          //   where: {
-          //     fullname: fullname,
-          //   },
-          // });
-
           const user = await User.findOne({ fullname: fullname });
 
           if (!user) {
@@ -71,12 +66,7 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          return {
-            id: user.id,
-            fullname: user.fullname,
-            photo: user?.photo as string,
-            store: user?.store as string,
-          };
+          return user;
         } catch (error) {
           console.error("Error during authentication:", error);
           return null;
@@ -95,7 +85,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (trigger === "update" && session) {
-        token.id = session.user?.id as string;
+        token.id = session.user?._id as string;
         token.fullname = session.user?.fullname as string;
         token.photo = session.user?.photo as string;
         token.store = session.user?.store as string;

@@ -6,8 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 import Product from "@/lib/models/product-model";
 import GroupRecord from "@/lib/models/groupRecord-model";
 import Record from "@/lib/models/record-model";
+import connectDB from "@/lib/db";
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const token = await verifyToken(req);
 
   try {
