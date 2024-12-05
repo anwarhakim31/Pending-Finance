@@ -14,11 +14,23 @@ export const splitDate = (date: string) => {
 export const formatToday = (date: Date) => {
   const day = new Date(date);
 
-  const startOfDay = new Date(day);
-  startOfDay.setUTCHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(day);
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  const startOfDay = new Date(
+    day.getUTCFullYear(),
+    day.getUTCMonth(),
+    day.getUTCDate(),
+    0,
+    0,
+    0 // Waktu awal hari di UTC
+  );
+  const endOfDay = new Date(
+    day.getUTCFullYear(),
+    day.getUTCMonth(),
+    day.getUTCDate(),
+    16,
+    59,
+    59,
+    999
+  );
 
   return [startOfDay, endOfDay];
 };
@@ -38,3 +50,7 @@ export function convertBigIntToJSON(obj: { [key: string]: bigint }) {
     )
   );
 }
+export const convertToJakartaTime = (date = new Date()) => {
+  const dates = new Date(date).setDate(date.getDate() + 1);
+  return new Date(dates);
+};

@@ -1,8 +1,9 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "./prisma";
+// import { prisma } from "./prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import jwt from "jsonwebtoken";
+import User from "./models/user-model";
 
 declare module "next-auth" {
   interface User {
@@ -53,11 +54,13 @@ export const authOptions: NextAuthOptions = {
         };
 
         try {
-          const user = await prisma.user.findFirst({
-            where: {
-              fullname: fullname,
-            },
-          });
+          // const user = await prisma.user.findFirst({
+          //   where: {
+          //     fullname: fullname,
+          //   },
+          // });
+
+          const user = await User.findOne({ fullname: fullname });
 
           if (!user) {
             return null;

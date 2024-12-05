@@ -132,7 +132,7 @@ function ProfileForm({
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["statistic"] });
         query.invalidateQueries({ queryKey: ["dateGroup"] });
-        query.invalidateQueries({ queryKey: ["recordHistory"] });
+        // query.invalidateQueries({ queryKey: ["recordHistory"] });
         toast.success(res.message);
         if (autoClose) {
           setOpen(false);

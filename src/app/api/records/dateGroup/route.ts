@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+// import { prisma } from "@/lib/prisma";
+import GroupRecord from "@/lib/models/groupRecord-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
 
@@ -25,16 +26,29 @@ export async function GET(req: NextRequest) {
     );
 
     if (token && typeof token === "object" && "id" in token) {
-      const dateGroup = await prisma.groupRecord.findMany({
-        where: {
-          userId: token.id as string,
-          date: {
-            gte: firstDayOfPreviousMonth,
-            lte: lastDayOfNextMonth,
-          },
-          records: { some: { total: { gt: 0 } } },
+      // const dateGroup = await prisma.groupRecord.findMany({
+      //   where: {
+      //     userId: token.id as string,
+      //     date: {
+      //       gte: firstDayOfPreviousMonth,
+      //       lte: lastDayOfNextMonth,
+      //     },
+      //     records: { some: { total: { gt: 0 } } },
+      //   },
+      // });
+
+      const dateGroup = await GroupRecord.find({
+        userId: token.id as string,
+        date: {
+          $gte: firstDayOfPreviousMonth,
+          $lte: lastDayOfNextMonth,
         },
-      });
+        "records.0": { $exists: true },
+      })
+        .populate({
+          path: "records",
+        })
+        .exec();
 
       const uniqueDates = new Map<string, { date: Date; id: string }>();
       dateGroup.forEach((record) => {

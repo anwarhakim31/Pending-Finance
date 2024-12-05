@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+// import { prisma } from "@/lib/prisma";
+import Product from "@/lib/models/product-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,26 +10,48 @@ export async function POST(req: NextRequest) {
     const { name, price, discountPrice, discountQuantity } = await req.json();
 
     if (token && typeof token === "object" && "id" in token) {
-      const nameIsExist = await prisma.products.findFirst({
-        where: {
-          name: name,
-          userId: token.id as string,
-        },
+      // const nameIsExist = await prisma.products.findFirst({
+      //   where: {
+      //     name: name,
+      //     userId: token.id as string,
+      //   },
+      // });
+
+      const nameIsExist = await Product.findOne({
+        userId: token.id as string,
+        name: name,
       });
 
       if (nameIsExist) {
         return ResponseError("Nama barang sudah digunakan.", 400);
       }
 
-      const product = await prisma.products.create({
-        data: {
-          name: name,
-          price: parseInt(price),
-          userId: token.id as string,
-          discountPrice: parseInt(discountPrice),
-          discountQuantity: parseInt(discountQuantity),
-        },
-      });
+      // const product = await prisma.products.create({
+      //   data: {
+      //     name: name,
+      //     price: parseInt(price),
+      //     userId: token.id as string,
+      //     discountPrice: parseInt(discountPrice),
+      //     discountQuantity: parseInt(discountQuantity),
+      //   },
+      // });
+
+      const data =
+        discountPrice && discountQuantity
+          ? {
+              name: name,
+              price: parseInt(price),
+              userId: token.id as string,
+              discountPrice: parseInt(discountPrice),
+              discountQuantity: parseInt(discountQuantity),
+            }
+          : {
+              name: name,
+              price: parseInt(price),
+              userId: token.id as string,
+            };
+
+      const product = await Product.create(data);
 
       return NextResponse.json({
         status: 200,
@@ -62,27 +85,46 @@ export async function GET(req: NextRequest) {
     console.log(search, page, limit);
 
     if (typeof token === "object" && "id" in token) {
-      const product = await prisma.products.findMany({
-        where: {
-          userId: token.id as string,
-          name: {
-            contains: search.trim().toLowerCase(),
-            mode: "insensitive",
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+      // const product = await prisma.products.findMany({
+      //   where: {
+      //     userId: token.id as string,
+      //     name: {
+      //       contains: search.trim().toLowerCase(),
+      //       mode: "insensitive",
+      //     },
+      //   },
+      //   orderBy: {
+      //     createdAt: "desc",
+      //   },
+      //   skip: (page - 1) * limit,
+      //   take: limit,
+      // });
 
-      const total = await prisma.products.count({
-        where: {
-          userId: token.id as string,
-          name: {
-            contains: search,
-          },
+      const product = await Product.find({
+        userId: token.id as string,
+        name: {
+          $regex: search.trim().toLowerCase(),
+          $options: "i",
+        },
+      })
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      // const total = await prisma.products.count({
+      //   where: {
+      //     userId: token.id as string,
+      //     name: {
+      //       contains: search,
+      //     },
+      //   },
+      // });
+
+      const total = await Product.countDocuments({
+        userId: token.id as string,
+        name: {
+          $regex: search.trim().toLowerCase(),
+          $options: "i",
         },
       });
 
@@ -115,61 +157,61 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
-  const token = await verifyToken(req);
-  try {
-    if (token instanceof NextResponse) {
-      return token;
-    }
-    const { searchParams } = req.nextUrl;
-    const id = searchParams.get("id");
-    const { name, price, discountPrice, discountQuantity } = await req.json();
+// export async function PATCH(req: NextRequest) {
+//   const token = await verifyToken(req);
+//   try {
+//     if (token instanceof NextResponse) {
+//       return token;
+//     }
+//     const { searchParams } = req.nextUrl;
+//     const id = searchParams.get("id");
+//     const { name, price, discountPrice, discountQuantity } = await req.json();
 
-    const product = await prisma.products.update({
-      where: {
-        id: parseInt(id as string),
-      },
-      data: {
-        name: name,
-        price: parseInt(price),
-        discountPrice: parseInt(discountPrice),
-        discountQuantity: parseInt(discountQuantity),
-      },
-    });
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      message: "Berhasil mengubah data barang.",
-      data: product,
-    });
-  } catch (error) {
-    console.log(error);
-    return ResponseError("Internal Server Error", 500);
-  }
-}
+//     const product = await prisma.products.update({
+//       where: {
+//         id: parseInt(id as string),
+//       },
+//       data: {
+//         name: name,
+//         price: parseInt(price),
+//         discountPrice: parseInt(discountPrice),
+//         discountQuantity: parseInt(discountQuantity),
+//       },
+//     });
+//     return NextResponse.json({
+//       status: 200,
+//       success: true,
+//       message: "Berhasil mengubah data barang.",
+//       data: product,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return ResponseError("Internal Server Error", 500);
+//   }
+// }
 
-export async function DELETE(req: NextRequest) {
-  const token = await verifyToken(req);
-  try {
-    if (token instanceof NextResponse) {
-      return token;
-    }
-    const { searchParams } = req.nextUrl;
-    const id = searchParams.get("id");
+// export async function DELETE(req: NextRequest) {
+//   const token = await verifyToken(req);
+//   try {
+//     if (token instanceof NextResponse) {
+//       return token;
+//     }
+//     const { searchParams } = req.nextUrl;
+//     const id = searchParams.get("id");
 
-    await prisma.products.delete({
-      where: {
-        id: parseInt(id as string),
-      },
-    });
+//     await prisma.products.delete({
+//       where: {
+//         id: parseInt(id as string),
+//       },
+//     });
 
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      message: "Berhasil menghapus data barang.",
-    });
-  } catch (error) {
-    console.log(error);
-    return ResponseError("Internal Server Error", 500);
-  }
-}
+//     return NextResponse.json({
+//       status: 200,
+//       success: true,
+//       message: "Berhasil menghapus data barang.",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return ResponseError("Internal Server Error", 500);
+//   }
+// }
