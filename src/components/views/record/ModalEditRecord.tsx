@@ -15,6 +15,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -40,6 +41,7 @@ import { AxiosError } from "axios";
 import useUpdateGroupData from "@/hooks/record/useUpdateGroupData";
 import { Record } from "@/types/model";
 import { Input } from "@/components/ui/input";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export function ModalEditRecord({ data }: { data: Record }) {
   const [open, setOpen] = React.useState(false);
@@ -54,6 +56,7 @@ export function ModalEditRecord({ data }: { data: Record }) {
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
+          <DialogDescription></DialogDescription>
           <DialogHeader>
             <DialogTitle>Edit Catatan</DialogTitle>
           </DialogHeader>
@@ -71,6 +74,7 @@ export function ModalEditRecord({ data }: { data: Record }) {
         </button>
       </DrawerTrigger>
       <DrawerContent>
+        <DrawerDescription></DrawerDescription>
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit Catatan</DrawerTitle>
         </DrawerHeader>
@@ -96,11 +100,13 @@ function ProfileForm({
 }) {
   const form = useForm<{
     quantity: number;
-    id: string;
+    _id: string;
+    product: string;
   }>({
     defaultValues: {
-      id: data.id || "",
+      _id: data._id || "",
       quantity: Number(data?.quantity) || 0,
+      product: data?.product || "",
     },
   });
   const query = useQueryClient();
@@ -110,9 +116,9 @@ function ProfileForm({
   const onSubmit = (data: Record) => {
     mutate(data, {
       onSuccess: (data) => {
-        toast.success(data.message);
+        query.invalidateQueries({ queryKey: ["dashboard"] });
         query.invalidateQueries({ queryKey: ["groupData"] });
-        query.invalidateQueries({ queryKey: ["statistic"] });
+        toast.success(data.message);
         setOpen(false);
       },
       onError: (error) => {

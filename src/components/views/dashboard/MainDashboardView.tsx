@@ -9,14 +9,13 @@ import {
 import React from "react";
 import { ModalRecordIncome } from "./ModalRecordIncome";
 import { ModalRecordReceive } from "./ModalRecordReceive";
-// import useFetchStatistic from "@/hooks/record/useFetchStatistic";
+
 import DateRecordView from "./DateRecordView";
 import { Meteors } from "@/components/ui/meteor";
 import AnimateCounter from "@/components/ui/animate-counter";
 import useFetchDashboard from "@/hooks/record/useFetchDashboard";
 
 const MainDashboardView = () => {
-  // const { data, isLoading } = useFetchStatistic();
   const [month, setMonth] = React.useState(new Date());
 
   const { data, isLoading } = useFetchDashboard(month);

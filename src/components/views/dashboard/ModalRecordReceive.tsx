@@ -119,8 +119,8 @@ function ProfileForm({
   const onSubmit = (value: { date: Date | null; total: number }) => {
     mutate(value, {
       onSuccess: (res) => {
-        query.invalidateQueries({ queryKey: ["statistic"] });
-        query.invalidateQueries({ queryKey: ["recordHistory"] });
+        query.invalidateQueries({ queryKey: ["dashboard"] });
+        // query.invalidateQueries({ queryKey: ["recordHistory"] });
         toast.success(res.message);
         setOpen(false);
       },

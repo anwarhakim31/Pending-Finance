@@ -1,7 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import connectDB from "@/lib/db";
+import GroupRecord from "@/lib/models/groupRecord-model";
+import Product from "@/lib/models/product-model";
+import Record from "@/lib/models/record-model";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
-import { convertBigIntToJSON } from "@/utils/helpers";
+import { Record as RecordType } from "@/types/model";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,23 +12,17 @@ export async function GET(
   req: NextRequest,
   params: { params: { id: string } }
 ) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
       const recordId = params.params.id;
 
-      const record = await prisma.groupRecord.findFirst({
-        where: {
-          id: recordId,
-        },
-        include: {
-          records: true,
-        },
-      });
+      const record = await GroupRecord.findById(recordId).populate("records");
 
       const totalIncome = record?.records.reduce(
-        (total, record) => total + (record.total || BigInt(0)),
-        BigInt(0)
+        (total: number, record: RecordType) => total + (record.total || 0),
+        0
       );
       const totalProduct = record?.records.length;
 
@@ -33,25 +30,14 @@ export async function GET(
         return ResponseError("Data tidak ditemukan", 400);
       }
 
-      const income = convertBigIntToJSON({
-        totalIncome: totalIncome || BigInt(0),
-      });
-
       return NextResponse.json({
         status: 200,
         success: true,
         message: "Berhasil mendapatakan data.",
         data: {
-          ...income,
+          totalIncome: totalIncome,
           totalProduct,
-          record: record.records.map((record) => ({
-            id: record.id,
-            product: record.product,
-            quantity: record.quantity,
-            total: convertBigIntToJSON({ total: record.total || BigInt(0) })
-              .total,
-            date: record.date,
-          })),
+          record: record.records,
           date: record.date,
         },
       });
@@ -68,17 +54,16 @@ export async function PATCH(
   req: NextRequest,
   params: { params: { id: string } }
 ) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     const recordId = params.params.id;
     const { quantity, product: productName } = await req.json();
 
     if (token && typeof token === "object" && "id" in token) {
-      const productDB = await prisma.products.findFirst({
-        where: {
-          name: productName,
-          userId: token.id,
-        },
+      const productDB = await Product.findOne({
+        name: productName,
+        userId: token.id,
       });
 
       if (!productDB) {
@@ -100,14 +85,9 @@ export async function PATCH(
         total = productDB.price * parseInt(quantity);
       }
 
-      await prisma.records.update({
-        where: {
-          id: recordId,
-        },
-        data: {
-          quantity: parseInt(quantity),
-          total: total,
-        },
+      await Record.findByIdAndUpdate(recordId, {
+        quantity: parseInt(quantity),
+        total: total,
       });
 
       return NextResponse.json({
@@ -128,6 +108,7 @@ export async function DELETE(
   req: NextRequest,
   params: { params: { id: string } }
 ) {
+  await connectDB();
   const token = await verifyToken(req);
   try {
     const recordId = params.params.id;
@@ -135,32 +116,22 @@ export async function DELETE(
     if (token instanceof NextResponse) {
       return token;
     }
-    const existingRecord = await prisma.records.findUnique({
-      where: {
-        id: recordId,
-      },
-    });
+
+    const existingRecord = await Record.findById(recordId);
 
     if (!existingRecord) {
       return ResponseError("Catatan tidak ditemukan.", 404);
     }
 
-    const total = await prisma.records.findMany({
-      where: {
-        groupId: existingRecord.groupId,
-      },
+    const total = await Record.find({
+      groupId: existingRecord.groupId,
     });
 
     if (total && total.length === 1) {
-      await prisma.groupRecord.delete({
-        where: {
-          id: existingRecord.groupId as string,
-        },
-      });
+      await GroupRecord.findByIdAndDelete(existingRecord.groupId);
+      await Record.findByIdAndDelete(recordId);
     } else {
-      await prisma.records.delete({
-        where: { id: recordId },
-      });
+      await Record.findByIdAndDelete(recordId);
     }
 
     return NextResponse.json({

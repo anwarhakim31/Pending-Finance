@@ -131,7 +131,7 @@ function ProfileForm({
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["dashboard"] });
-        // query.invalidateQueries({ queryKey: ["dateGroup"] });
+
         // query.invalidateQueries({ queryKey: ["recordHistory"] });
         toast.success(res.message);
         if (autoClose) {
@@ -173,7 +173,7 @@ function ProfileForm({
                   <SelectSearchOption
                     field={field}
                     data={data?.data?.map((item: Products) => ({
-                      id: item.id,
+                      id: item._id,
                       value: item.name,
                     }))}
                     isLoading={isLoading}

@@ -1,6 +1,4 @@
 import { CalendarCustom } from "@/components/ui/CustomCalender";
-// import useFetchDateGroup from "@/hooks/record/useFetchDateGroup";
-// import { Record } from "@/types/model";
 import { useRouter } from "next/navigation";
 import React from "react";
 

@@ -11,28 +11,23 @@ export const splitDate = (date: string) => {
   return new Date(date).toISOString().split("T")[0];
 };
 
-export const formatToday = (date: Date) => {
-  const day = new Date(date);
-
-  const startOfDay = new Date(
-    day.getUTCFullYear(),
-    day.getUTCMonth(),
-    day.getUTCDate(),
-    0,
-    0,
-    0 // Waktu awal hari di UTC
+export const formatToday = (date: Date = new Date()) => {
+  const startOfDayUTC = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   );
-  const endOfDay = new Date(
-    day.getUTCFullYear(),
-    day.getUTCMonth(),
-    day.getUTCDate(),
-    16,
-    59,
-    59,
-    999
+  const endOfDayUTC = new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      23,
+      59,
+      59,
+      999
+    )
   );
 
-  return [startOfDay, endOfDay];
+  return { startOfDayUTC, endOfDayUTC };
 };
 
 export const formatDateId = (date: string) => {

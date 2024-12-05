@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
       const totalReceive = totals.receive[0]?.total || 0;
       const totalPending = totalIncome - totalReceive;
 
-      // Optimasi query untuk GroupRecord
       const fiveGroupRecord = await GroupRecord.find({
         userId,
         date: { $lte: new Date().setHours(23, 59, 59, 999) },

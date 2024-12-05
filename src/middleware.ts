@@ -17,20 +17,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // if (token && pathname.startsWith("/record")) {
-  //   const res = await fetch(
-  //     `${process.env.NEXT_PUBLIC_API_URL}/records?` +
-  //       new URLSearchParams({
-  //         userId: token.id as string,
-  //         recordId: pathname.split("/")[2],
-  //       })
-  //   );
+  if (token && pathname.startsWith("/record")) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/records?` +
+        new URLSearchParams({
+          userId: token.id as string,
+          recordId: pathname.split("/")[2],
+        })
+    );
 
-  //   if (!res.ok) {
-  //     url.pathname = "/dashboard";
-  //     return NextResponse.redirect(url);
-  //   }
-  // }
+    if (!res.ok) {
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+  }
 
   if (!token && !authPage.includes(pathname.split("/")[1])) {
     const url = new URL("/login", req.url);

@@ -109,7 +109,7 @@ function ProfileForm({
     },
   });
   const query = useQueryClient();
-  const { mutate, isPending } = useUpdateProduct(data.id?.toString() || "");
+  const { mutate, isPending } = useUpdateProduct(data._id?.toString() || "");
 
   const onSubmit = (data: Products) => {
     if (form.watch("discountPrice") && !form.watch("discountQuantity")) {

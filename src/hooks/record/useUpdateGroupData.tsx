@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 const useUpdateGroupData = () => {
   return useMutation({
     mutationFn: async (data: Record) => {
-      const res = await instance.patch(`/records/${data?.id as string}`, data);
+      const res = await instance.patch(`/records/${data?._id as string}`, data);
 
       return res.data;
     },

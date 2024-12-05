@@ -33,7 +33,7 @@ const ProductCardList = ({ product }: { product: Products }) => {
         <div className="absolute top-0 right-1 flex gap-2">
           <ModalEditProduct data={product} />
           <ModalOneDelete
-            id={product?.id?.toString() || ""}
+            id={product?._id?.toString() || ""}
             url="/product"
             keys={["products"]}
           />

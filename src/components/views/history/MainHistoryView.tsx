@@ -41,7 +41,7 @@ const MainHistoryView = () => {
     if (dataCheck.length > 0) {
       setDataCheck([]);
     } else {
-      setDataCheck(data.data.map((item: Record) => item.id));
+      setDataCheck(data.data.map((item: Record) => item._id));
     }
   };
 
@@ -145,7 +145,7 @@ const MainHistoryView = () => {
           <div>
             {data?.data?.map((item: Record) => (
               <HistoryCardList
-                key={item.id}
+                key={item._id}
                 handleCheck={handleCheck}
                 item={item}
                 checked={dataCheck}

@@ -1,5 +1,5 @@
 export interface User {
-  id?: string;
+  _id?: string;
   fullname: string;
   photo?: string;
   phone?: string;
@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface Products {
-  id?: number;
+  _id?: number;
   name: string;
   price: number;
   discountPrice?: number;
@@ -15,7 +15,7 @@ export interface Products {
 }
 
 export interface Record {
-  id?: string;
+  _id?: string;
   date?: Date | null;
   type?: string;
   product?: string;
@@ -26,7 +26,7 @@ export interface Record {
 }
 
 export interface GroupData {
-  id?: string;
+  _id?: string;
   date: Date | null;
   total?: number | null;
   data: {

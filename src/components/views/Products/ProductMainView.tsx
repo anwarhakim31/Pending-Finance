@@ -47,7 +47,7 @@ const ProductMainView = () => {
           ) : data?.data.length > 0 ? (
             <>
               {data.data.map((product: Products) => (
-                <ProductCardList key={product.id} product={product} />
+                <ProductCardList key={product._id} product={product} />
               ))}
               {pagination?.page === 1 &&
               data.data.length < pagination?.limit ? null : (

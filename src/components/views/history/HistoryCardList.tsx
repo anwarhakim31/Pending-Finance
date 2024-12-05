@@ -23,9 +23,9 @@ const HistoryCardList = ({
         } p-4 gap-2 rounded-md min-h-[5.5rem] border-gray-300 dark:border-gray-600`}
       >
         <Checkbox
-          id={item.id}
-          onCheckedChange={() => handleCheck(item.id || "")}
-          checked={checked?.includes(item.id || "")}
+          id={item._id}
+          onCheckedChange={() => handleCheck(item._id || "")}
+          checked={checked?.includes(item._id || "")}
           className={`mt-0.5 ${
             item.type === "income"
               ? "data-[state=checked]:bg-blue-600"
@@ -55,7 +55,7 @@ const HistoryCardList = ({
           </p>
         </div>
         <ModalOneDelete
-          id={item.id || ""}
+          id={item._id || ""}
           url={`/records/history`}
           keys={["history", "statistic", "dateGroup"]}
         />

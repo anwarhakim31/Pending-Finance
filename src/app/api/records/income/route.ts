@@ -1,5 +1,4 @@
 import { formatToday } from "@/utils/helpers";
-// import { prisma } from "@/lib/prisma";
 import { ResponseError } from "@/lib/ResponseError";
 import verifyToken from "@/lib/verifyToken";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,13 +17,7 @@ export async function POST(req: NextRequest) {
 
       const localDate = new Date(date);
       localDate.setHours(23, 59, 59, 999);
-      const utcDate = new Date(localDate.toISOString());
-
-      // const productDB = await prisma.products.findFirst({
-      //   where: {
-      //     name: product,
-      //   },
-      // });
+      const utcDate = new Date(localDate.toUTCString());
 
       const productDB = await Product.findOne({
         userId: token.id as string,
@@ -53,35 +46,12 @@ export async function POST(req: NextRequest) {
       let groupRecords = await GroupRecord.findOne({
         userId: token.id as string,
         date: {
-          $gte: formatToday(localDate)[0],
-          $lt: formatToday(localDate)[1],
+          $gte: formatToday(localDate).startOfDayUTC,
+          $lt: formatToday(localDate).endOfDayUTC,
         },
       });
 
-      // let groupRecord = await prisma.groupRecord.findFirst({
-      //   where: {
-      //     date: {
-      //       gte: formatToday(localDate)[0],
-      //       lt: formatToday(localDate)[1],
-      //     },
-      //     userId: token.id as string,
-      //   },
-      //   include: {
-      //     records: true,
-      //   },
-      // });
-
       if (!groupRecords) {
-        // groupRecord = await prisma.groupRecord.create({
-        //   data: {
-        //     date: localDate,
-        //     userId: token.id as string,
-        //   },
-        //   include: {
-        //     records: true,
-        //   },
-        // });
-
         groupRecords = await GroupRecord.create({
           userId: token.id as string,
           date: utcDate,
@@ -89,42 +59,16 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // const existingRecordToday = await prisma.records.findFirst({
-      //   where: {
-      //     date: {
-      //       gte: formatToday(localDate)[0],
-      //       lt: formatToday(localDate)[1],
-      //     },
-      //     userId: token.id as string,
-      //     product: product,
-      //   },
-      //   select: {
-      //     id: true,
-      //     quantity: true,
-      //     total: true,
-      //   },
-      // });
-
       const existingRecordToday = await Record.findOne({
         userId: token.id as string,
         date: {
-          $gte: formatToday(localDate)[0],
-          $lt: formatToday(localDate)[1],
+          $gte: formatToday(localDate).startOfDayUTC,
+          $lt: formatToday(localDate).endOfDayUTC,
         },
         product: product,
       });
 
       if (existingRecordToday) {
-        // await prisma.records.update({
-        //   where: {
-        //     id: existingRecordToday.id,
-        //   },
-        //   data: {
-        //     quantity: (existingRecordToday?.quantity || 0) + parseInt(quantity),
-        //     total: Number(existingRecordToday.total) + total,
-        //   },
-        // });
-
         await Record.findOneAndUpdate(
           {
             _id: existingRecordToday._id,
@@ -148,18 +92,6 @@ export async function POST(req: NextRequest) {
           }
         );
       } else {
-        // await prisma.records.create({
-        //   data: {
-        //     userId: token.id as string,
-        //     type: "income",
-        //     date: localDate,
-        //     product: product,
-        //     total,
-        //     quantity: parseInt(quantity),
-        //     groupId: groupRecord.id,
-        //   },
-        // });
-
         const newRecord = await Record.create({
           userId: token.id as string,
           type: "income",

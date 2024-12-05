@@ -45,12 +45,14 @@ export function DatePicker({ field }: { field: FieldValues }) {
           selected={field.value}
           defaultMonth={field.value}
           onSelect={(date) => {
-            const localDate = new Date(date as Date);
-            localDate.setHours(23, 59, 59, 999);
-            const utcDate = new Date(localDate.toISOString());
+            if (date) {
+              const localDate = new Date(date as Date);
+              localDate.setHours(23, 59, 59, 999);
+              const utcDate = new Date(localDate.toISOString());
 
-            field.onChange(utcDate);
-            setIsOpen(false);
+              field.onChange(utcDate);
+              setIsOpen(false);
+            }
           }}
           className="text-xs"
           disabled={(date) =>

@@ -27,8 +27,7 @@ export function ModalDeleteRecord({ id }: { id: string }) {
       onSuccess: () => {
         router.push("/dashboard");
         toast.success("Catatan berhasil dihapus");
-        query.invalidateQueries({ queryKey: ["groupData"] });
-        query.invalidateQueries({ queryKey: ["statistic"] });
+        query.invalidateQueries({ queryKey: ["dashboard"] });
         query.invalidateQueries({ queryKey: ["dateGroup"] });
       },
       onError: (error: Error) => {

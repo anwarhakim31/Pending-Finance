@@ -9,7 +9,7 @@ const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
     <div className="grid grid-cols-1 xs:grid-cols-2 mt-6 gap-2">
       {data?.data?.record?.map((record: Record) => (
         <div
-          key={record.id}
+          key={record._id}
           className="relative rounded-md border border-gray-300 dark:border-gray-700 p-2 shadow-md pr-6"
         >
           <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
@@ -24,8 +24,8 @@ const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
           <div className="absolute top-2 right-2 flex gap-2 bg-white dark:bg-black flex-col">
             <ModalOneDelete
               id={""}
-              url={`/records/${record.id}`}
-              keys={["groupData", "statistic", "dateGroup"]}
+              url={`/records/${record._id}`}
+              keys={["groupData", "dashboard"]}
               pathname={`${data.data.record.length === 1 ? "/dashboard" : ""}`}
             />
             <ModalEditRecord data={record} />
