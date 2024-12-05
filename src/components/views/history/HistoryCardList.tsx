@@ -35,7 +35,7 @@ const HistoryCardList = ({
         <div className="flex-1 ">
           <p className="text-xs">
             <span className="w-24 inline-block">Tanggal </span>:{" "}
-            {item?.date ? formatDateId(item?.date.toString()) : "-"}
+            {item?.date ? formatDateId(new Date(item.date).toISOString()) : "-"}
           </p>
           {item.product && item.quantity ? (
             <>

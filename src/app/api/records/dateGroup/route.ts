@@ -1,4 +1,3 @@
-// import { prisma } from "@/lib/prisma";
 import connectDB from "@/lib/db";
 import GroupRecord from "@/lib/models/groupRecord-model";
 import { ResponseError } from "@/lib/ResponseError";

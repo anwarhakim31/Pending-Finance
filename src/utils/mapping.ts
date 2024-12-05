@@ -33,10 +33,8 @@ export const historyMap = (data: Record[]) => {
     const existingEntry = groupedData.get(key);
 
     if (existingEntry) {
-      // Jika key sudah ada, tambahkan item ke dalam data
       existingEntry.data.push(item);
     } else {
-      // Jika belum ada, tambahkan entri baru
       groupedData.set(key, {
         date: new Date(item.date || "").toDateString(),
         type: item.type || "",
@@ -45,8 +43,9 @@ export const historyMap = (data: Record[]) => {
     }
   });
 
-  return Array.from(groupedData.values()).sort((a, b) =>
-    a.date.localeCompare(b.date)
+  return Array.from(groupedData.values()).sort(
+    (a, b) =>
+      new Date(a.date || "").getTime() - new Date(b.date || "").getTime()
   );
 };
 

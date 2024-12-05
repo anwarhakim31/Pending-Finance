@@ -63,16 +63,18 @@ export async function DELETE(req: NextRequest) {
       const recordId = req.nextUrl.searchParams.get("id");
 
       const record = await Record.findByIdAndDelete({ _id: recordId });
-      await GroupRecord.findByIdAndDelete(
-        { _id: record?.groupId },
-        {
-          $pull: {
-            records: {
-              _id: record?._id,
+      if (record.groupId) {
+        await GroupRecord.findByIdAndDelete(
+          { _id: record?.groupId },
+          {
+            $pull: {
+              records: {
+                _id: record?._id,
+              },
             },
-          },
-        }
-      );
+          }
+        );
+      }
 
       return NextResponse.json({
         status: 200,
