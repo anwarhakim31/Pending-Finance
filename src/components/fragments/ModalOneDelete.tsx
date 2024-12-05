@@ -18,13 +18,15 @@ export function ModalOneDelete({
   id,
   url,
   keys,
+  pathname,
 }: {
   id: string;
   url: string;
   keys: string[];
+  pathname?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate, isPending } = useDeleteOne(id, url, keys);
+  const { mutate, isPending } = useDeleteOne(id, url, keys, pathname);
 
   const handleDelete = () => {
     mutate();

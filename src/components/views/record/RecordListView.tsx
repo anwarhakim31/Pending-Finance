@@ -25,7 +25,8 @@ const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
             <ModalOneDelete
               id={""}
               url={`/records/${record.id}`}
-              keys={["statistic", "dateGroup", "groupData"]}
+              keys={["groupData", "statistic", "dateGroup"]}
+              pathname={`${data.data.record.length === 1 ? "/dashboard" : ""}`}
             />
             <ModalEditRecord data={record} />
           </div>

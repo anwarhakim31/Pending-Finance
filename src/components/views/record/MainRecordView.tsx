@@ -24,8 +24,9 @@ const MainRecordView = ({ id }: { id: string }) => {
   useEffect(() => {
     if (isError) {
       toast.error("Data tidak ditemukan");
+      router.replace("/dashboard");
     }
-  }, [isError]);
+  }, [isError, router]);
 
   useEffect(() => {
     if (!isLoading && !isFetching && data?.data?.record?.length === 0) {

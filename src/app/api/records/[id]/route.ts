@@ -145,9 +145,23 @@ export async function DELETE(
       return ResponseError("Catatan tidak ditemukan.", 404);
     }
 
-    await prisma.records.delete({
-      where: { id: recordId },
+    const total = await prisma.records.findMany({
+      where: {
+        groupId: existingRecord.groupId,
+      },
     });
+
+    if (total && total.length === 1) {
+      await prisma.groupRecord.delete({
+        where: {
+          id: existingRecord.groupId as string,
+        },
+      });
+    } else {
+      await prisma.records.delete({
+        where: { id: recordId },
+      });
+    }
 
     return NextResponse.json({
       status: 200,

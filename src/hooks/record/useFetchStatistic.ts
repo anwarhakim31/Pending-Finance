@@ -9,7 +9,6 @@ const useFetchStatistic = () => {
       return res.data;
     },
     staleTime: 0,
-    enabled: true,
   });
 };
 
