@@ -4,13 +4,7 @@ import { Record } from "@/types/model";
 import React from "react";
 import { ModalEditRecord } from "./ModalEditRecord";
 
-const RecordListView = ({
-  data,
-  id,
-}: {
-  data: { data: { record: Record[] } };
-  id: string;
-}) => {
+const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 mt-6 gap-2">
       {data?.data?.record?.map((record: Record) => (
@@ -29,8 +23,8 @@ const RecordListView = ({
           </p>
           <div className="absolute top-2 right-2 flex gap-2 bg-white dark:bg-black flex-col">
             <ModalOneDelete
-              id={(record?.id as string) || ""}
-              url={`/records/${id}`}
+              id={""}
+              url={`/records/${record.id}`}
               keys={["statistic", "dateGroup", "groupData"]}
             />
             <ModalEditRecord data={record} />

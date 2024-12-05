@@ -136,7 +136,7 @@ const MainRecordView = ({ id }: { id: string }) => {
           </div>
         </div>
 
-        {isLoading ? <Loader /> : <RecordListView data={data} id={id} />}
+        {isLoading ? <Loader /> : <RecordListView data={data} />}
       </section>
     </main>
   );

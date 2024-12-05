@@ -13,16 +13,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import useDeleteGroupData from "@/hooks/record/useDeleteGroupData";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
+import { useRouter } from "next/navigation";
 
 export function ModalDeleteRecord({ id }: { id: string }) {
   const { mutate, isPending } = useDeleteGroupData();
   const query = useQueryClient();
+  const router = useRouter();
 
   const handleDelete = () => {
-    mutate(id);
-    query.invalidateQueries({ queryKey: ["groupData"] });
-    query.invalidateQueries({ queryKey: ["statistic"] });
-    query.invalidateQueries({ queryKey: ["dateGroup"] });
+    mutate(id, {
+      onSuccess: () => {
+        router.push("/dashboard");
+        toast.success("Catatan berhasil dihapus");
+        query.invalidateQueries({ queryKey: ["groupData"] });
+        query.invalidateQueries({ queryKey: ["statistic"] });
+        query.invalidateQueries({ queryKey: ["dateGroup"] });
+      },
+      onError: (error: Error) => {
+        ResponseErrorAxios(error as Error);
+      },
+    });
   };
 
   return (

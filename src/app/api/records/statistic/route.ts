@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
         orderBy: {
           date: "desc",
         },
-        take: 1000,
+        take: 500,
       });
       const uniqueDates = new Map<string, { date: Date; total: number }>();
 

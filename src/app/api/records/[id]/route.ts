@@ -85,8 +85,6 @@ export async function PATCH(
         return ResponseError("Data tidak ditemukan", 400);
       }
 
-      console.log(productDB, quantity);
-
       let total = 0;
 
       if (productDB.discountQuantity && productDB.discountPrice) {
@@ -132,12 +130,7 @@ export async function DELETE(
 ) {
   const token = await verifyToken(req);
   try {
-    const groupId = params.params.id;
-    const recordId = req.nextUrl.searchParams.get("id") || "";
-
-    if (!recordId) {
-      return ResponseError("ID catatan tidak ditemukan.", 400);
-    }
+    const recordId = params.params.id;
 
     if (token instanceof NextResponse) {
       return token;
@@ -145,12 +138,11 @@ export async function DELETE(
     const existingRecord = await prisma.records.findUnique({
       where: {
         id: recordId,
-        groupId: groupId,
       },
     });
 
     if (!existingRecord) {
-      return ResponseError("Record tidak ditemukan.", 404);
+      return ResponseError("Catatan tidak ditemukan.", 404);
     }
 
     await prisma.records.delete({
