@@ -21,6 +21,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { LoadingButton } from "@/components/ui/LoadingButton";
+import { InputPassword } from "@/components/ui/input-password";
 
 const formSchema = z.object({
   fullname: z.string().min(1, {
@@ -104,9 +105,8 @@ const LoginView = () => {
             <FormItem style={{ marginTop: "1rem" }}>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
+                <InputPassword
                   placeholder="***********"
-                  type="password"
                   {...field}
                   autoComplete="off"
                 />

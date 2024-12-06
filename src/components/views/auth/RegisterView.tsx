@@ -17,6 +17,7 @@ import useRegister from "@/hooks/auth/useRegister";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingButton } from "@/components/ui/LoadingButton";
+import { InputPassword } from "@/components/ui/input-password";
 
 const formSchema = z.object({
   store: z
@@ -124,9 +125,8 @@ export function RegisterView() {
             <FormItem style={{ marginTop: "1rem" }}>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
+                <InputPassword
                   placeholder="**********"
-                  type="password"
                   {...field}
                   autoComplete="off"
                 />

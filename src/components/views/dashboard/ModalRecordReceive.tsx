@@ -113,14 +113,18 @@ function ProfileForm({
   const { mutate, isPending } = useCreateReceive();
 
   React.useEffect(() => {
-    form.setValue("date", new Date());
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const utcDate = new Date(today.toISOString());
+
+    form.setValue("date", utcDate);
   }, [form]);
 
   const onSubmit = (value: { date: Date | null; total: number }) => {
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["dashboard"] });
-        // query.invalidateQueries({ queryKey: ["recordHistory"] });
+
         toast.success(res.message);
         setOpen(false);
       },

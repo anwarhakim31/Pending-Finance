@@ -18,6 +18,7 @@ import useForget from "@/hooks/auth/useForget";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { LoadingButton } from "@/components/ui/LoadingButton";
+import { InputPassword } from "@/components/ui/input-password";
 
 const formSchema = z.object({
   store: z.string().min(1, {
@@ -118,9 +119,8 @@ const ForgetPasswordView = () => {
             <FormItem style={{ marginTop: "1rem" }}>
               <FormLabel>Password Baru</FormLabel>
               <FormControl>
-                <Input
+                <InputPassword
                   placeholder="**********"
-                  type="password"
                   {...field}
                   autoComplete="off"
                 />

@@ -8,13 +8,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@/components/ui/LoadingButton";
 
 import useChangePassword from "@/hooks/profile/useChangePassword";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { InputPassword } from "@/components/ui/input-password";
 
 const FormPasswordView = ({
   isPassword,
@@ -88,11 +89,10 @@ const FormPasswordView = ({
                 </FormLabel>
 
                 <FormControl>
-                  <Input
+                  <InputPassword
                     placeholder="***********"
                     {...field}
                     autoComplete="off"
-                    type="password"
                     className={`${
                       isPassword
                         ? " border-gray-400 "
@@ -126,11 +126,10 @@ const FormPasswordView = ({
                   Password Baru
                 </FormLabel>
                 <FormControl>
-                  <Input
+                  <InputPassword
                     placeholder="***********"
                     {...field}
                     autoComplete="off"
-                    type="password"
                     className={`${
                       isPassword
                         ? " border-gray-400 "
