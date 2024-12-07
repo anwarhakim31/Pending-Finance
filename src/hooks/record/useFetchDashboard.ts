@@ -11,7 +11,7 @@ const fetchData = async (month: Date) => {
 
 const useFetchDashboard = (month: Date) => {
   return useQuery({
-    queryKey: ["dashboard", month],
+    queryKey: ["dashboard", { month }],
     queryFn: async () => fetchData(month),
     staleTime: 5 * 60 * 1000,
     placeholderData: (oldData) => oldData,
