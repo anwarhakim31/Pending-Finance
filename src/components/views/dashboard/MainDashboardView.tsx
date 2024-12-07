@@ -14,9 +14,11 @@ import DateRecordView from "./DateRecordView";
 import { Meteors } from "@/components/ui/meteor";
 import AnimateCounter from "@/components/ui/animate-counter";
 import useFetchDashboard from "@/hooks/record/useFetchDashboard";
+import { useSession } from "next-auth/react";
 
 const MainDashboardView = () => {
   const [month, setMonth] = React.useState(new Date());
+  const session = useSession();
 
   const { data, isLoading } = useFetchDashboard(month);
 
@@ -25,7 +27,7 @@ const MainDashboardView = () => {
       <section className="container">
         <div className="overflow-hidden relative z-[1] min-h-[250px] w-full bg-gradient-to-tr    from-purple-700 py-4 rounded-br-2xl rounded-bl-2xl via-violet-500 to-violet-400">
           <h3 className="px-3 mt-10 text-center text-base font-medium text-white">
-            LosBlancos
+            {session?.data?.user?.store || "Toko"}
           </h3>
           <BarChartComponent
             data={data?.resStatistic?.data.chartStatistic}

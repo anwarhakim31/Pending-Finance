@@ -15,7 +15,6 @@ const useFetchDashboard = (month: Date) => {
     queryFn: async () => fetchData(month),
     staleTime: 5 * 60 * 1000,
     placeholderData: (oldData) => oldData,
-    enabled: !!month,
   });
 };
 

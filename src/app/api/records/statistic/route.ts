@@ -13,8 +13,6 @@ export async function GET(req: NextRequest) {
   const today = new Date().setHours(23, 59, 59, 999);
   const utcDate = new Date(today);
 
-  console.log(utcDate);
-
   try {
     if (token && typeof token === "object" && "id" in token) {
       const userId = new mongoose.Types.ObjectId(token.id as string);
