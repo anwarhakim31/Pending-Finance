@@ -31,14 +31,19 @@ export async function POST(req: NextRequest) {
       let total = 0;
 
       if (productDB.discountQuantity && productDB.discountPrice) {
-        const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
+        const value =
+          (productDB.discountPrice / productDB.discountQuantity) * quantity;
 
-        const qtyNotDiscount =
-          quantity - qtyDiscount * productDB.discountQuantity;
+        total = Math.ceil(value / 100) * 100;
 
-        total =
-          qtyNotDiscount * productDB.price +
-          qtyDiscount * productDB.discountPrice;
+        // const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
+
+        // const qtyNotDiscount =
+        //   quantity - qtyDiscount * productDB.discountQuantity;
+
+        // total =
+        //   qtyNotDiscount * productDB.price +
+        //   qtyDiscount * productDB.discountPrice;
       } else {
         total = productDB.price * parseInt(quantity);
       }

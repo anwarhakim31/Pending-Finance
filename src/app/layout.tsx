@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     default: APP_DEFAULT_TITLE,
     template: APP_TITLE_TEMPLATE,
   },
+
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
   appleWebApp: {

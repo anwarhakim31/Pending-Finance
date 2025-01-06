@@ -8,8 +8,8 @@ import { Copy, EllipsisVertical, FileQuestion } from "lucide-react";
 import React from "react";
 import HistoryCardList from "./HistoryCardList";
 import { ModalDeleteHistory } from "./ModalDeleteHistory";
-import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
-import { useSearchParams } from "next/navigation";
+// import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
+
 import { DatePickerWithRange } from "@/components/fragments/DatePickerRange";
 import { DateRange } from "react-day-picker";
 import Image from "next/image";
@@ -22,18 +22,16 @@ import { useSession } from "next-auth/react";
 const MainHistoryView = () => {
   const session = useSession();
   const [dataCheck, setDataCheck] = React.useState<string[]>([]);
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "100");
+
+  const today = new Date();
+
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 10, 20),
+    from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
     to: new Date(),
   });
 
   const { data, isLoading } = useFetchRecordHistory(
-    page,
-    pageSize,
-    date?.from ?? new Date(2024, 10, 20),
+    date?.from ?? new Date(`${today.getFullYear()}-${today.getMonth() + 1}-01`),
     date?.to ?? new Date()
   );
 
@@ -151,7 +149,7 @@ const MainHistoryView = () => {
                 checked={dataCheck}
               />
             ))}
-            <div className="mt-8">
+            {/* <div className="mt-8">
               {page === 1 && data.data.length < pageSize ? null : (
                 <PaginationWithLinks
                   page={page}
@@ -160,7 +158,7 @@ const MainHistoryView = () => {
                   keys="recordHistory"
                 />
               )}
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="w-full flex justify-center items-center flex-col mt-48">

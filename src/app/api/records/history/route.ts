@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
-      const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
-      const limit = parseInt(req.nextUrl.searchParams.get("limit") || "20");
       const fromDate = req.nextUrl.searchParams.get("from");
       const toDate = req.nextUrl.searchParams.get("to");
       const first = new Date(fromDate || new Date()).setHours(0, 0, 0, 0);
@@ -23,10 +21,7 @@ export async function GET(req: NextRequest) {
           $gte: fromDate ? new Date(first).toISOString() : undefined,
           $lte: toDate ? new Date(last).toISOString() : undefined,
         },
-      })
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit);
+      }).sort({ createdAt: -1 });
 
       const totalRecords = await Record.countDocuments({
         userId: token.id as string,
@@ -41,8 +36,6 @@ export async function GET(req: NextRequest) {
         success: true,
         data: records,
         pagination: {
-          page,
-          limit,
           total: totalRecords,
         },
       });

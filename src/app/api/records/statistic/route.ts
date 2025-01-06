@@ -10,6 +10,11 @@ export async function GET(req: NextRequest) {
   await connectDB();
   const token = await verifyToken(req);
 
+  const today = new Date().setHours(23, 59, 59, 999);
+  const utcDate = new Date(today);
+
+  console.log(utcDate);
+
   try {
     if (token && typeof token === "object" && "id" in token) {
       const userId = new mongoose.Types.ObjectId(token.id as string);
@@ -36,7 +41,7 @@ export async function GET(req: NextRequest) {
 
       const fiveGroupRecord = await GroupRecord.find({
         userId,
-        date: { $lte: new Date().setHours(23, 59, 59, 999) },
+        date: { $lte: utcDate },
       })
         .populate({
           path: "records",
