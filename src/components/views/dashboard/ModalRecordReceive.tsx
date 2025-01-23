@@ -102,11 +102,11 @@ function ProfileForm({
 }) {
   const form = useForm<{
     date: Date | null;
-    total: number;
+    total: number | undefined;
   }>({
     defaultValues: {
       date: null,
-      total: 0,
+      total: undefined,
     },
   });
   const query = useQueryClient();
@@ -120,7 +120,10 @@ function ProfileForm({
     form.setValue("date", utcDate);
   }, [form]);
 
-  const onSubmit = (value: { date: Date | null; total: number }) => {
+  const onSubmit = (value: {
+    date: Date | null;
+    total: number | undefined;
+  }) => {
     mutate(value, {
       onSuccess: (res) => {
         query.invalidateQueries({ queryKey: ["dashboard"] });

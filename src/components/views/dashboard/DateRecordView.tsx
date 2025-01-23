@@ -1,5 +1,5 @@
 import { CalendarCustom } from "@/components/ui/CustomCalender";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 const DateRecordView = ({
@@ -10,11 +10,20 @@ const DateRecordView = ({
   setMonth: React.Dispatch<React.SetStateAction<Date>>;
 }) => {
   const router = useRouter();
+  const params = useSearchParams();
+
+  const month = params.get("month");
 
   return (
     <CalendarCustom
       mode="single"
-      onMonthChange={(month) => setMonth(month)}
+      defaultMonth={month ? new Date(month) : new Date()}
+      onMonthChange={(month) => {
+        setMonth(month);
+        router.replace("/dashboard?month=" + month.toISOString(), {
+          scroll: false,
+        });
+      }}
       onSelect={(date) =>
         router.push(
           `/record/${

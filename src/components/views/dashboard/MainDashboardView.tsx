@@ -15,9 +15,15 @@ import { Meteors } from "@/components/ui/meteor";
 import AnimateCounter from "@/components/ui/animate-counter";
 import useFetchDashboard from "@/hooks/record/useFetchDashboard";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 const MainDashboardView = () => {
-  const [month, setMonth] = React.useState(new Date());
+  const params = useSearchParams();
+  const monthParams = params.get("month");
+
+  const [month, setMonth] = React.useState(
+    monthParams ? new Date(monthParams) : new Date()
+  );
   const session = useSession();
 
   const { data, isLoading } = useFetchDashboard(month);

@@ -76,7 +76,7 @@ const MainHistoryView = () => {
 
   return (
     <main>
-      <section className="container pt-[4.5rem] pb-12 px-4 ">
+      <section className="container pt-[4.5rem] pb-20 px-4 ">
         <div className="flex gap-2 items-center justify-between ">
           <div className="flex gap-2 items-center select-none">
             <div className="flex gap-1 items-center ">

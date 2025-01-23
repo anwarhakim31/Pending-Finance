@@ -58,7 +58,7 @@ const MainRecordView = ({ id }: { id: string }) => {
 
   return (
     <main>
-      <section className="container pt-[4.5rem] pb-12 px-4 sm:pb-0">
+      <section className="container pt-[4.5rem] pb-20 px-4 sm:pb-0">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-sm font-medium text-black dark:text-white">

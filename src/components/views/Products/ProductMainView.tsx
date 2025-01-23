@@ -27,7 +27,7 @@ const ProductMainView = () => {
 
   return (
     <main>
-      <section className="container pt-[4.5rem] pb-16 px-4 ">
+      <section className="container pt-[4.5rem] pb-20 px-4 ">
         <div className="relative overflow-hidden w-full h-24 bg-gradient-to-tr rounded-lg flex-center flex-col from-purple-700 p-4  via-violet-500 to-violet-400">
           <h3 className="relative z-[1] text-white text-4xl">
             <AnimateCounter value={data?.pagination.total || 0} type="number" />
