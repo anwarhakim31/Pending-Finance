@@ -12,10 +12,10 @@ const HeaderLayout = () => {
 
   return (
     <header
-      className={`absolute z-[10] top-0 left-0 w-full   dark:bg-black py-2 `}
+      className={`absolute z-[10] top-0 left-0 w-full   py-2 `}
       data-theme="light"
     >
-      <div className="container flex justify-between items-center px-3">
+      <div className="container flex justify-between items-center  px-3">
         <Logo />
         <div className="flex items-center gap-4">
           <ThemeSwitcher />

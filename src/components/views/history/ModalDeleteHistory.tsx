@@ -48,7 +48,7 @@ export function ModalDeleteHistory({
           aria-label="hapus semua"
           title="Hapus Semua"
           disabled={dataCheck.length === 0}
-          className={`w-6 h-6 rounded-md  bg-red-500 flex items-center justify-center ${
+          className={`w-9 h-9 rounded-md  bg-red-500 flex items-center justify-center ${
             dataCheck.length > 0
               ? "opacity-100  pointer-events-auto  "
               : "opacity-0  pointer-events-auto"

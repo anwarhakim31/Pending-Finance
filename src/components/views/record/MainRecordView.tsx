@@ -87,7 +87,7 @@ const MainRecordView = ({ id }: { id: string }) => {
               title="Kirim Whatsapp"
               type="button"
               onClick={() => handleCopyText(data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md text-primary bg-white transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
               <Copy size={16} strokeWidth={1.5} />
             </button>

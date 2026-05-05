@@ -31,7 +31,7 @@ export function BarChartComponent({
 }) {
   if (isLoading) {
     return (
-      <div className="flex items-center py-6 px-4 justify-between h-[165px] w-[100%] mx-auto">
+      <div className="flex items-center py-11 px-4 justify-between h-[185px] w-[100%] mx-auto">
         <div className="flex items-end justify-center  h-full w-full gap-2">
           <Skeleton className=" h-[80%] w-4 bg-gray-200 rounded-sm"></Skeleton>
           <Skeleton className=" h-[50%] w-4 bg-gray-200 rounded-sm"></Skeleton>
@@ -58,7 +58,7 @@ export function BarChartComponent({
 
   if (!isLoading && data?.length === 0) {
     return (
-      <div className="flex items-center py-6 px-4 justify-center h-[165px] w-[100%] mx-auto">
+      <div className="flex items-center py-11 px-4 justify-center h-[185px] w-[100%] mx-auto">
         <div className="flex items-center justify-center gap-2">
           <BarChart2Icon color="#ffffff" />
           <p className="text-white text-xs ">Tidak ada catatan.</p>
@@ -68,7 +68,7 @@ export function BarChartComponent({
   }
 
   return (
-    <ChartContainer className=" h-[165px] w-full p-0.5 " config={chartConfig}>
+    <ChartContainer className=" h-[185px] w-full py-4 " config={chartConfig}>
       <BarChart accessibilityLayer data={data}>
         <CartesianGrid vertical={false} strokeDasharray="0.1 0.1" />
         <XAxis

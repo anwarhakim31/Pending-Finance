@@ -14,6 +14,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -43,6 +44,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { formatDateNow } from "@/utils/helpers";
 
 export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
   const [open, setOpen] = React.useState(false);
@@ -62,10 +64,13 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Tambah Catatan</DialogTitle>
+          <DialogHeader className="mb-4">
+            <DialogTitle className="font-medium">Tambah Catatan</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Masukkan jumlah barang yang dijual dan tentukan tanggalnya
+            </DialogDescription>
           </DialogHeader>
-          <DialogDescription></DialogDescription>
+
           <ProfileForm setOpen={setOpen} />
         </DialogContent>
       </Dialog>
@@ -85,12 +90,17 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Tambah Catatan</DrawerTitle>
+        <DrawerHeader className="text-left mb-4">
+          <DrawerTitle className=" font-medium mb-0">
+            Tambah Catatan
+          </DrawerTitle>
+          <DrawerDescription className="text-xs text-muted-foreground">
+            Masukkan jumlah barang yang dijual dan tentukan tanggalnya
+          </DrawerDescription>
         </DrawerHeader>
-        <DialogDescription></DialogDescription>
+
         <ProfileForm className="px-4" setOpen={setOpen} />
-        <DrawerFooter className="pt-2">
+        <DrawerFooter className="py-6">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>
           </DrawerClose>
@@ -113,7 +123,7 @@ function ProfileForm({
     quantity: number | string;
   }>({
     defaultValues: {
-      date: null,
+      date: formatDateNow() || null,
       product: "",
       quantity: "",
     },
@@ -122,14 +132,6 @@ function ProfileForm({
   const { mutate, isPending } = useCreateIncome();
   const { data, isLoading } = useFetchProduct();
   const [autoClose, setAutoClose] = React.useState(true);
-
-  React.useEffect(() => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const utcDate = new Date(today.toISOString());
-
-    form.setValue("date", utcDate);
-  }, [form]);
 
   const onSubmit = (value: Record) => {
     mutate(value, {
@@ -147,68 +149,68 @@ function ProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-6", className)}
       >
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="date"
-            rules={{ required: "Tanngal tidak boleh kosong." }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Tanggal</FormLabel>
-                <FormControl className="flex-col">
-                  <DatePicker field={field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="product"
-            rules={{ required: "Barang tidak boleh kosong." }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col ">
-                <FormLabel>Barang</FormLabel>
-                <FormControl>
-                  <SelectSearchOption
-                    field={field}
-                    data={data?.data?.map((item: Products) => ({
-                      id: item._id,
-                      value: item.name,
-                    }))}
-                    isLoading={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
-          name="quantity"
-          rules={{
-            required: "Jumlah tidak boleh kosong.",
-            min: { value: 1, message: "Jumlah minimal 1" },
-          }}
+          name="date"
+          rules={{ required: "Tanngal tidak boleh kosong." }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="font-normal block w-fit">Tanggal</FormLabel>
+              <FormControl className="flex-col">
+                <DatePicker field={field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="product"
+          rules={{ required: "Barang tidak boleh kosong." }}
           render={({ field }) => (
             <FormItem className="flex flex-col ">
-              <FormLabel>Jumlah barang dijual</FormLabel>
+              <FormLabel className="font-normal block w-fit">Barang</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="1"
-                  type="number"
-                  max={100000000}
-                  {...field}
+                <SelectSearchOption
+                  field={field}
+                  data={data?.data?.map((item: Products) => ({
+                    id: item._id,
+                    value: item.name,
+                  }))}
+                  isLoading={isLoading}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="flex items-center space-x-2">
+
+        <FormField
+          control={form.control}
+          name="quantity"
+          rules={{
+            required: "Jumlah barang tidak boleh kosong.",
+            min: { value: 1, message: "Jumlah barang minimal 1" },
+            max: {
+              value: 100000000,
+              message: "Jumlah barang maksimal 100.000.000",
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col ">
+              <FormLabel className="font-normal block w-fit">
+                Jumlah barang dijual
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="5" type="number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex items-center space-x-2 my-4">
           <Checkbox
             id="terms"
             checked={autoClose}
@@ -223,7 +225,7 @@ function ProfileForm({
         </div>
         <LoadingButton
           loading={isPending || isLoading}
-          style={{ marginTop: "1rem" }}
+          className="mt-2 py-5"
           type="submit"
         >
           Simpan

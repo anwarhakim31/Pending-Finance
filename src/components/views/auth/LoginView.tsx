@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { signIn } from "next-auth/react";
 
@@ -22,6 +22,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { LoadingButton } from "@/components/ui/LoadingButton";
 import { InputPassword } from "@/components/ui/input-password";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   fullname: z.string().min(1, {
@@ -42,13 +44,25 @@ const LoginView = () => {
   });
   const [notMatch, setNotMatch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRemember, setIsRemember] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
+  useEffect(() => {
+    const ls = localStorage.getItem("remember");
+
+    if (ls) {
+      form.setValue("fullname", JSON.parse(ls).fullname || "");
+      form.setValue("password", JSON.parse(ls).password || "");
+      setIsRemember(true);
+    }
+  }, [form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+
     try {
       const res = await signIn("credentials", {
         ...values,
@@ -60,7 +74,7 @@ const LoginView = () => {
         setIsLoading(false);
         return;
       }
-      router.push(callbackUrl);
+      router.replace(callbackUrl);
     } catch (error) {
       if (error instanceof AxiosError) {
         form.reset();
@@ -91,6 +105,18 @@ const LoginView = () => {
                   placeholder="pending"
                   type="text"
                   {...field}
+                  onChange={(e) => {
+                    if (isRemember) {
+                      localStorage.setItem(
+                        "remember",
+                        JSON.stringify({
+                          fullname: e.target.value,
+                          password: form.getValues("password"),
+                        }),
+                      );
+                    }
+                    field.onChange(e.target.value);
+                  }}
                   autoComplete="off"
                 />
               </FormControl>
@@ -108,6 +134,18 @@ const LoginView = () => {
                 <InputPassword
                   placeholder="***********"
                   {...field}
+                  onChange={(e) => {
+                    if (isRemember) {
+                      localStorage.setItem(
+                        "remember",
+                        JSON.stringify({
+                          fullname: form.getValues("fullname"),
+                          password: e.target.value,
+                        }),
+                      );
+                    }
+                    field.onChange(e.target.value);
+                  }}
                   autoComplete="off"
                 />
               </FormControl>
@@ -123,10 +161,34 @@ const LoginView = () => {
           Lupa Password
         </Link>
 
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="remember"
+            checked={isRemember}
+            onCheckedChange={() => {
+              setIsRemember(!isRemember);
+
+              if (isRemember) {
+                localStorage.removeItem("remember");
+              } else {
+                localStorage.setItem(
+                  "remember",
+                  JSON.stringify({
+                    fullname: form.getValues("fullname"),
+                    password: form.getValues("password"),
+                  }),
+                );
+              }
+            }}
+          />
+          <Label htmlFor="remember" className="text-xs">
+            Ingat saya
+          </Label>
+        </div>
         <LoadingButton
           type="submit"
           loading={isLoading}
-          style={{ marginTop: "2rem" }}
+          className="w-full mt-8 py-5"
         >
           Masuk
         </LoadingButton>

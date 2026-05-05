@@ -24,10 +24,11 @@ export function DatePicker({ field }: { field: FieldValues }) {
       <PopoverTrigger asChild>
         <FormControl>
           <Button
+            autoFocus
             variant={"outline"}
             className={cn(
-              "w-full pl-3 text-left font-normal text-xs",
-              !field.value && "text-muted-foreground "
+              "w-full pl-3 text-left font-normal text-xs flex items-center focus-visible:ring-primary focus:ring-primary focus:ring-1 hover:bg-white",
+              !field.value && "text-muted-foreground ",
             )}
           >
             {field.value ? (

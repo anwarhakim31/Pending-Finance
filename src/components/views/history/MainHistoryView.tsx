@@ -32,7 +32,7 @@ const MainHistoryView = () => {
 
   const { data, isLoading } = useFetchRecordHistory(
     date?.from ?? new Date(`${today.getFullYear()}-${today.getMonth() + 1}-01`),
-    date?.to ?? new Date()
+    date?.to ?? new Date(),
   );
 
   const handleCheckAll = () => {
@@ -105,7 +105,7 @@ const MainHistoryView = () => {
               type="button"
               disabled={data?.data?.length === 0 || isLoading}
               onClick={() => handleCopyText(data?.data)}
-              className="flex-center gap-2 w-8 h-8 rounded-md  disabled:cursor-not-allowed bg-gray-200 transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
+              className="flex-center gap-2 w-8 h-8 rounded-md  disabled:cursor-not-allowed bg-white text-primary transition-all duration-300 ease-in border border-gray-300 hover:bg-gray-100  dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-500 dark:hover:border-gray-500"
             >
               <Copy size={16} strokeWidth={1.5} />
             </button>

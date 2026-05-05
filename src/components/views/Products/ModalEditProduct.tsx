@@ -57,11 +57,14 @@ export function ModalEditProduct({ data }: { data: Products }) {
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Barang</DialogTitle>
+          <DialogHeader className="mb-0">
+            <DialogTitle className="font-medium">Edit Barang</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mb-0">
+              Edit barang dengan mengisi nama barang dan harga
+            </DialogDescription>
           </DialogHeader>
           <DialogDescription />
-          <ProfileForm data={data} setOpen={setOpen} />
+          <ProfileForm setOpen={setOpen} data={data} />
         </DialogContent>
       </Dialog>
     );
@@ -75,11 +78,14 @@ export function ModalEditProduct({ data }: { data: Products }) {
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Edit Barang</DrawerTitle>
+        <DrawerHeader className="text-left mb-0">
+          <DrawerTitle className=" font-medium mb-0">Edit Barang</DrawerTitle>
+          <DrawerDescription className="text-xs text-muted-foreground mb-0">
+            Edit barang dengan mengisi nama barang dan harga
+          </DrawerDescription>
         </DrawerHeader>
-        <DrawerDescription />
-        <ProfileForm className="px-4" data={data} setOpen={setOpen} />
+
+        <ProfileForm className="px-4" setOpen={setOpen} data={data} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>
@@ -164,7 +170,9 @@ function ProfileForm({
           rules={{ required: "Nama barang tidak boleh kosong." }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama Barang</FormLabel>
+              <FormLabel className="font-normal block w-fit">
+                Nama Barang
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder=""
@@ -183,12 +191,26 @@ function ProfileForm({
           rules={{ required: "Harga Satuan tidak boleh kosong." }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Harga Satuan</FormLabel>
+              <FormLabel className="font-normal block w-fit">
+                Harga Satuan
+              </FormLabel>
               <FormControl>
                 <InputCurrcency
                   placeholder=""
-                  {...field}
-                  type="number"
+                  onFocus={(e) => {
+                    e.target.select();
+                  }}
+                  value={
+                    field.value
+                      ? new Intl.NumberFormat("id-ID").format(field.value)
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, "");
+                    field.onChange(raw ? Number(raw) : undefined);
+                  }}
+                  type="string"
+                  inputMode="numeric"
                   min={0}
                   max={100000000}
                   autoComplete="off"
@@ -198,21 +220,37 @@ function ProfileForm({
             </FormItem>
           )}
         />
-        <div>
-          <span className="text-xs text-gray-400  block">Opsional</span>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-center flex-col">
+          <span className="text-xs text-gray-400 w-full  mb-2  block">
+            Opsional
+          </span>
+          <div className="flex gap-2 w-full">
             <FormField
               control={form.control}
               name="discountPrice"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>Harga Diskon</FormLabel>
+                  <FormLabel className="font-normal block w-fit">
+                    Harga Diskon
+                  </FormLabel>
                   <FormControl>
                     <InputCurrcency
-                      placeholder=""
-                      {...field}
+                      placeholder="5.000"
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
+                      value={
+                        field.value
+                          ? new Intl.NumberFormat("id-ID").format(field.value)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, "");
+                        field.onChange(raw ? Number(raw) : undefined);
+                      }}
                       autoComplete="off"
-                      type="number"
+                      type="string"
+                      inputMode="numeric"
                       min={0}
                       max={100000000}
                       className="w-full"
@@ -227,10 +265,15 @@ function ProfileForm({
               name="discountQuantity"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>Jumlah Diskon Barang</FormLabel>
+                  <FormLabel className="font-normal block w-fit">
+                    Jumlah Diskon Barang
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder=""
+                      placeholder="3"
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
                       {...field}
                       type="number"
                       min={0}
@@ -246,11 +289,7 @@ function ProfileForm({
           </div>
         </div>
 
-        <LoadingButton
-          loading={isPending}
-          style={{ marginTop: "2rem" }}
-          type="submit"
-        >
+        <LoadingButton loading={isPending} className="mt-4 py-5" type="submit">
           Simpan
         </LoadingButton>
       </form>

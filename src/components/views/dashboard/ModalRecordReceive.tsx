@@ -14,6 +14,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -38,6 +39,9 @@ import { toast } from "sonner";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { InputCurrcency } from "@/components/ui/InputCurrency";
 import useCreateReceive from "@/hooks/record/useCreateReceive";
+import { formatDateNow } from "@/utils/helpers";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 
 export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
   const [open, setOpen] = React.useState(false);
@@ -56,10 +60,13 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
+          <DialogHeader className="mb-0">
             <DialogTitle>Pendapatan Diterima</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Masukkan jumlah uang yang diterima dan tentukan tanggalnya
+            </DialogDescription>
           </DialogHeader>
-          <DialogDescription></DialogDescription>
+
           <ProfileForm setOpen={setOpen} />
         </DialogContent>
       </Dialog>
@@ -78,10 +85,16 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Pendapatan Diterima</DrawerTitle>
+        <DrawerHeader className="text-left mb-4">
+          <DrawerTitle className=" font-medium mb-0">
+            Pendapatan Diterima
+          </DrawerTitle>
+
+          <DrawerDescription className="text-xs text-muted-foreground">
+            Masukkan jumlah uang yang diterima dan tentukan tanggalnya
+          </DrawerDescription>
         </DrawerHeader>
-        <DialogDescription></DialogDescription>
+
         <ProfileForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
@@ -105,20 +118,13 @@ function ProfileForm({
     total: number | undefined;
   }>({
     defaultValues: {
-      date: null,
-      total: undefined,
+      date: formatDateNow() || null,
+      total: 0,
     },
   });
+  const [autoClose, setAutoClose] = React.useState(true);
   const query = useQueryClient();
   const { mutate, isPending } = useCreateReceive();
-
-  React.useEffect(() => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const utcDate = new Date(today.toISOString());
-
-    form.setValue("date", utcDate);
-  }, [form]);
 
   const onSubmit = (value: {
     date: Date | null;
@@ -129,7 +135,12 @@ function ProfileForm({
         query.invalidateQueries({ queryKey: ["dashboard"] });
 
         toast.success(res.message);
-        setOpen(false);
+        if (autoClose) {
+          setOpen(false);
+        }
+      },
+      onError: (error) => {
+        ResponseErrorAxios(error);
       },
     });
   };
@@ -138,52 +149,75 @@ function ProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-6", className)}
       >
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="date"
-            rules={{ required: "Tanngal tidak boleh kosong." }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Tanggal</FormLabel>
-                <FormControl className="flex-col">
-                  <DatePicker field={field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <FormField
+          control={form.control}
+          name="date"
+          rules={{ required: "Tanngal tidak boleh kosong." }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="font-normal block w-fit">Tanggal</FormLabel>
+              <FormControl className="flex-col">
+                <DatePicker field={field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="total"
+          rules={{
+            required: "Total diterima tidak boleh kosong.",
+            min: { value: 1, message: "Minimal total diterima adalah 1" },
+            max: {
+              value: 100000000,
+              message: "Maksimal total diterima adalah Rp. 100.000.000",
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col ">
+              <FormLabel className="font-normal block w-fit">
+                Total Diterima
+              </FormLabel>
+              <FormControl>
+                <InputCurrcency
+                  type="text"
+                  inputMode="numeric"
+                  onFocus={(e) => e.target.select()}
+                  value={
+                    field.value
+                      ? new Intl.NumberFormat("id-ID").format(field.value)
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, "");
+                    field.onChange(raw ? Number(raw) : undefined);
+                  }}
+                  placeholder="100.000"
+                  max={100000000}
+                  min={0}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex items-center space-x-2 my-4">
+          <Checkbox
+            id="terms"
+            checked={autoClose}
+            onCheckedChange={() => setAutoClose((value) => !value)}
           />
-          <FormField
-            control={form.control}
-            name="total"
-            rules={{
-              required: "Total tidak boleh kosong.",
-              min: { value: 1, message: "Minimal total adalah 1" },
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col ">
-                <FormLabel>Total Diterima</FormLabel>
-                <FormControl>
-                  <InputCurrcency
-                    {...field}
-                    type="number"
-                    placeholder="1000"
-                    max={100000000}
-                    min={0}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <label
+            htmlFor="terms"
+            className="text-xs text-gray-700 font-normal mt-0.5 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Tutup otomatis saat selesai menyimpan
+          </label>
         </div>
-        <LoadingButton
-          loading={isPending}
-          style={{ marginTop: "2rem" }}
-          type="submit"
-        >
+        <LoadingButton loading={isPending} className="mt-2 py-5" type="submit">
           Simpan
         </LoadingButton>
       </form>

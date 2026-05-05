@@ -56,9 +56,11 @@ export function ModalEditRecord({ data }: { data: Record }) {
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogDescription></DialogDescription>
           <DialogHeader>
-            <DialogTitle>Edit Catatan</DialogTitle>
+            <DialogTitle className="font-medium">Edit Catatan</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Edit catatan dengan mengisi jumlah barang
+            </DialogDescription>
           </DialogHeader>
           <ProfileForm data={data} setOpen={setOpen} />
         </DialogContent>
@@ -75,8 +77,11 @@ export function ModalEditRecord({ data }: { data: Record }) {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerDescription></DrawerDescription>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Edit Catatan</DrawerTitle>
+        <DrawerHeader>
+          <DrawerTitle className=" font-medium mb-0">Edit Catatan</DrawerTitle>
+          <DrawerDescription className="text-xs text-muted-foreground">
+            Edit catatan dengan mengisi jumlah barang
+          </DrawerDescription>
         </DrawerHeader>
         <ProfileForm className="px-4" data={data} setOpen={setOpen} />
         <DrawerFooter className="pt-2">
@@ -131,7 +136,7 @@ function ProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-6", className)}
       >
         <FormField
           control={form.control}
@@ -145,7 +150,9 @@ function ProfileForm({
           }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Jumlah yang dijual</FormLabel>
+              <FormLabel className="font-normal block w-fit">
+                Jumlah yang dijual
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder=""
@@ -159,11 +166,7 @@ function ProfileForm({
           )}
         />
 
-        <LoadingButton
-          loading={isPending}
-          style={{ marginTop: "2rem" }}
-          type="submit"
-        >
+        <LoadingButton loading={isPending} className="py-5" type="submit">
           Simpan
         </LoadingButton>
       </form>

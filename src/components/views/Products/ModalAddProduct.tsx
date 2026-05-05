@@ -53,14 +53,17 @@ export function ModalAddProduct({ isLoading }: { isLoading: boolean }) {
         <DialogTrigger asChild>
           <button
             disabled={isLoading}
-            className="text-xs flex-shrink-0 disabled:cursor-not-allowed ml-auto w-36 border border-gray-300 hover:bg-violet-100 transition-all duration-300 ease-in-out text-violet-700 py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-white"
+            className="text-xs flex-shrink-0 disabled:cursor-not-allowed ml-auto w-36 border bg-primary text-white border-gray-300 hover:bg-primary/80 transition-all duration-300 ease-in-out py-2.5 px-2 rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-white"
           >
             Tambah Barang
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Tambah Barang</DialogTitle>
+          <DialogHeader className="">
+            <DialogTitle className="font-medium">Tambah Barang</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mb-0">
+              Tambahkan barang baru dengan mengisi nama barang dan harga
+            </DialogDescription>
           </DialogHeader>
           <DialogDescription />
           <ProfileForm setOpen={setOpen} />
@@ -80,10 +83,13 @@ export function ModalAddProduct({ isLoading }: { isLoading: boolean }) {
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Tambah Barang</DrawerTitle>
+        <DrawerHeader className="text-left mb-0">
+          <DrawerTitle className=" font-medium mb-0">Tambah Barang</DrawerTitle>
+          <DrawerDescription className="text-xs text-muted-foreground mb-0">
+            Tambahkan barang baru dengan mengisi nama barang dan harga
+          </DrawerDescription>
         </DrawerHeader>
-        <DrawerDescription />
+
         <ProfileForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
@@ -159,7 +165,7 @@ function ProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("space-y-4", className)}
+        className={cn("space-y-6", className)}
       >
         <FormField
           control={form.control}
@@ -167,7 +173,9 @@ function ProfileForm({
           rules={{ required: "Nama barang tidak boleh kosong." }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama Barang</FormLabel>
+              <FormLabel className="font-normal block w-fit">
+                Nama Barang
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Makanan"
@@ -186,12 +194,26 @@ function ProfileForm({
           rules={{ required: "Harga Satuan tidak boleh kosong." }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Harga Satuan</FormLabel>
+              <FormLabel className="font-normal block w-fit">
+                Harga Satuan
+              </FormLabel>
               <FormControl>
                 <InputCurrcency
                   placeholder="1000"
-                  {...field}
-                  type="number"
+                  onFocus={(e) => {
+                    e.target.select();
+                  }}
+                  type="string"
+                  inputMode="numeric"
+                  value={
+                    field.value
+                      ? new Intl.NumberFormat("id-ID").format(field.value)
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, "");
+                    field.onChange(raw ? Number(raw) : undefined);
+                  }}
                   min={0}
                   max={100000000}
                   autoComplete="off"
@@ -201,20 +223,36 @@ function ProfileForm({
             </FormItem>
           )}
         />
-        <div>
-          <span className="text-xs text-gray-400  block">Opsional</span>
+        <div className="flex items-center justify-center flex-col">
+          <span className="text-xs text-gray-400 w-full  mb-2  block mx-auto">
+            Opsional
+          </span>
           <div className="flex gap-2 w-full">
             <FormField
               control={form.control}
               name="discountPrice"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>Harga Diskon</FormLabel>
+                  <FormLabel className="font-normal block w-fit">
+                    Harga Diskon
+                  </FormLabel>
                   <FormControl>
                     <InputCurrcency
-                      type="number"
-                      placeholder="5000"
-                      {...field}
+                      type="string"
+                      inputMode="numeric"
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
+                      placeholder="5.000"
+                      value={
+                        field.value
+                          ? new Intl.NumberFormat("id-ID").format(field.value)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, "");
+                        field.onChange(raw ? Number(raw) : undefined);
+                      }}
                       autoComplete="off"
                       min={0}
                       max={100000000}
@@ -229,9 +267,14 @@ function ProfileForm({
               name="discountQuantity"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>Jumlah Diskon Barang</FormLabel>
+                  <FormLabel className="font-normal block w-fit">
+                    Jumlah Diskon Barang
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
                       placeholder="3"
                       {...field}
                       type="number"
@@ -247,11 +290,7 @@ function ProfileForm({
           </div>
         </div>
 
-        <LoadingButton
-          loading={isPending}
-          style={{ marginTop: "2rem" }}
-          type="submit"
-        >
+        <LoadingButton loading={isPending} className="mt-4 py-5" type="submit">
           Simpan
         </LoadingButton>
       </form>

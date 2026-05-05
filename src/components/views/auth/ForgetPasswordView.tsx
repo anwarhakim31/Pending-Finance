@@ -129,10 +129,11 @@ const ForgetPasswordView = () => {
             </FormItem>
           )}
         />
+
         <LoadingButton
           type="submit"
           loading={isPending}
-          style={{ marginTop: "2rem" }}
+          className="w-full mt-8 py-5"
         >
           Ganti Password
         </LoadingButton>

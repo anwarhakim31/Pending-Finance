@@ -65,7 +65,7 @@ export function RegisterView() {
         });
 
         if (res?.ok) {
-          router.push(callbackUrl);
+          router.replace(callbackUrl);
         }
       },
       onError: (error) => {
@@ -135,10 +135,11 @@ export function RegisterView() {
             </FormItem>
           )}
         />
+
         <LoadingButton
           type="submit"
           loading={isPending}
-          style={{ marginTop: "2rem" }}
+          className="w-full mt-8 py-5"
         >
           Daftar
         </LoadingButton>

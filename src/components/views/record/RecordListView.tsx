@@ -6,11 +6,11 @@ import { ModalEditRecord } from "./ModalEditRecord";
 
 const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
   return (
-    <div className="grid grid-cols-1 xs:grid-cols-2 mt-6 gap-2">
+    <div className="grid grid-cols-1  mt-6 gap-2">
       {data?.data?.record?.map((record: Record) => (
         <div
           key={record._id}
-          className="relative rounded-md border border-gray-300 dark:border-gray-700 p-2 shadow-md pr-6"
+          className="relative rounded-lg border border-gray-300 dark:border-gray-700 p-4 shadow-lg pr-6"
         >
           <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
             {record.product}
@@ -21,7 +21,7 @@ const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
           <p className="text-xs text-gray-600 mt-1 dark:text-white ">
             Total Harga : {formatCurrency((record?.total as number) || 0)}
           </p>
-          <div className="absolute top-2 right-2 flex gap-2 bg-white dark:bg-black flex-col">
+          <div className="absolute top-4 right-2 flex gap-2 bg-white dark:bg-black ">
             <ModalOneDelete
               id={""}
               url={`/records/${record._id}`}

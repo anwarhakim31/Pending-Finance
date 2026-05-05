@@ -38,7 +38,7 @@ const InputSearch = ({ ...props }: React.ComponentProps<"input">) => {
         onChange={(e) => setSearch(e.target.value)}
         value={search}
         placeholder="Cari Barang"
-        className="rounded-full pl-8 w-full"
+        className="rounded-md pl-8 h-10 w-full"
       />
       <SearchIcon
         className="absolute top-1/2 -translate-y-1/2 left-3 text-muted-foreground"

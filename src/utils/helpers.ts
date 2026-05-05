@@ -13,7 +13,7 @@ export const splitDate = (date: string) => {
 
 export const formatToday = (date: Date = new Date()) => {
   const startOfDayUTC = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
   );
   const endOfDayUTC = new Date(
     Date.UTC(
@@ -23,8 +23,8 @@ export const formatToday = (date: Date = new Date()) => {
       23,
       59,
       59,
-      999
-    )
+      999,
+    ),
   );
 
   return { startOfDayUTC, endOfDayUTC };
@@ -43,4 +43,11 @@ export const formatDateId = (date: string) => {
 export const convertToJakartaTime = (date = new Date()) => {
   const dates = new Date(date).setDate(date.getDate() + 1);
   return new Date(dates);
+};
+
+export const formatDateNow = () => {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  const utcDate = new Date(today.toISOString());
+  return utcDate;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { FieldValues } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
@@ -47,8 +47,8 @@ const SelectSearchOption = ({
             variant="outline"
             role="combobox"
             className={cn(
-              "w-full justify-between text-xs",
-              !field.value && "text-muted-foreground"
+              "w-full justify-between text-xs focus-visible:ring-primary hover:bg-white",
+              !field.value && "text-muted-foreground",
             )}
             onClick={() => setIsOpen(true)}
             disabled={isLoading}
@@ -56,11 +56,13 @@ const SelectSearchOption = ({
             {field.value
               ? data?.find((item) => item.value === field.value)?.value
               : "Pilih Barang"}
-            <ChevronsUpDown className="opacity-50" />
+            <ChevronDown
+              className={`${isOpen ? "rotate-180" : ""} opacity-50`}
+            />
           </Button>
         </FormControl>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] max-h-[200px]  p-0">
+      <PopoverContent className=" max-h-[200px] w-[--radix-popover-trigger-width]   p-0">
         <Command>
           <CommandInput
             placeholder="Cari Nama Barang..."
@@ -84,7 +86,7 @@ const SelectSearchOption = ({
                   <Check
                     className={cn(
                       "ml-auto",
-                      item.value === field.value ? "opacity-100" : "opacity-0"
+                      item.value === field.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
