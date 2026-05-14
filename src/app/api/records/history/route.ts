@@ -14,12 +14,16 @@ export async function GET(req: NextRequest) {
       const toDate = req.nextUrl.searchParams.get("to");
       const first = new Date(fromDate || new Date()).setHours(0, 0, 0, 0);
       const last = new Date(toDate || new Date()).setHours(23, 59, 59, 999);
+      const type = req.nextUrl.searchParams.get("type");
 
       const records = await Record.find({
         userId: token.id as string,
         date: {
           $gte: fromDate ? new Date(first).toISOString() : undefined,
           $lte: toDate ? new Date(last).toISOString() : undefined,
+        },
+        type: {
+          $in: type ? [type] : ["income", "receive"],
         },
       }).sort({ createdAt: -1 });
 
@@ -65,7 +69,7 @@ export async function DELETE(req: NextRequest) {
                 _id: record?._id,
               },
             },
-          }
+          },
         );
       }
 
@@ -99,7 +103,7 @@ export async function POST(req: NextRequest) {
               $in: dataCheck,
             },
           },
-        }
+        },
       );
 
       return NextResponse.json({

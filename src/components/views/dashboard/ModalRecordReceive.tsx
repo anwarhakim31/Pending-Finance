@@ -59,7 +59,7 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
             Terima
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] h-fit">
           <DialogHeader className="mb-0">
             <DialogTitle>Pendapatan Diterima</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
@@ -94,8 +94,10 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
             Masukkan jumlah uang yang diterima dan tentukan tanggalnya
           </DrawerDescription>
         </DrawerHeader>
+        <DrawerContent className="h-fit">
+          <ProfileForm className="px-4" setOpen={setOpen} />
+        </DrawerContent>
 
-        <ProfileForm className="px-4" setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>

@@ -1,16 +1,22 @@
 import instance from "@/lib/instance";
 import { useQuery } from "@tanstack/react-query";
 
-const useFetchRecordHistory = (dateFrom: Date, dateTo: Date) => {
+const useFetchRecordHistory = (dateFrom: Date, dateTo: Date, type?: string) => {
+  const params = new URLSearchParams();
+  params.append("from", dateFrom.toISOString());
+  params.append("to", dateTo.toISOString());
+
+  if (type) {
+    params.append("type", type);
+  }
+
   return useQuery({
-    queryKey: ["history", { dateFrom, dateTo }],
+    queryKey: ["history", { dateFrom, dateTo, type }],
     queryFn: async () => {
-      const res = await instance.get(
-        "/records/history?page=" + "&from=" + dateFrom + "&to=" + dateTo
-      );
+      const res = await instance.get("/records/history?" + params.toString());
       return res.data;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
     placeholderData: (oldData) => oldData,
     enabled: !!dateFrom && !!dateTo,
   });

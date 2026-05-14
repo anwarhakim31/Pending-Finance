@@ -18,12 +18,15 @@ import wa from "@/assets/wa.svg";
 import { toast } from "sonner";
 import { historyMap, historyTextMap } from "@/utils/mapping";
 import { useSession } from "next-auth/react";
+import SelectTypeOption from "./select-type-option";
+import { useSearchParams } from "next/navigation";
 
 const MainHistoryView = () => {
   const session = useSession();
   const [dataCheck, setDataCheck] = React.useState<string[]>([]);
-
+  const searchParams = useSearchParams();
   const today = new Date();
+  const type = searchParams.get("type");
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
@@ -33,6 +36,7 @@ const MainHistoryView = () => {
   const { data, isLoading } = useFetchRecordHistory(
     date?.from ?? new Date(`${today.getFullYear()}-${today.getMonth() + 1}-01`),
     date?.to ?? new Date(),
+    type || undefined,
   );
 
   const handleCheckAll = () => {
@@ -112,6 +116,26 @@ const MainHistoryView = () => {
           </div>
         </div>
         <div className="flex items-center justify-between gap-2 mt-3">
+          <SelectTypeOption
+            data={[
+              {
+                id: "semua",
+                value: "Semua",
+              },
+              {
+                id: "income",
+                value: "Diterima",
+              },
+              {
+                id: "receive",
+                value: "Ditambah",
+              },
+            ]}
+            isLoading={isLoading}
+          />
+          <DatePickerWithRange date={date} setDate={setDate} />
+        </div>
+        <div className=" mt-3">
           <div className="flex items-center gap-2">
             <Checkbox
               id="check-all"
@@ -134,8 +158,6 @@ const MainHistoryView = () => {
               setDataCheck={setDataCheck}
             />
           </div>
-
-          <DatePickerWithRange date={date} setDate={setDate} />
         </div>
         {isLoading ? (
           <Loader />

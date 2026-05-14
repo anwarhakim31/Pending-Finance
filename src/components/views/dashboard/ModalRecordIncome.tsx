@@ -63,7 +63,7 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
             Tambah
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] h-fit">
           <DialogHeader className="mb-4">
             <DialogTitle className="font-medium">Tambah Catatan</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
@@ -99,7 +99,9 @@ export function ModalRecordIncome({ isLoading }: { isLoading: boolean }) {
           </DrawerDescription>
         </DrawerHeader>
 
-        <ProfileForm className="px-4" setOpen={setOpen} />
+        <DrawerContent className="h-fit">
+          <ProfileForm className="px-4" setOpen={setOpen} />
+        </DrawerContent>
         <DrawerFooter className="py-6">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>
@@ -204,7 +206,14 @@ function ProfileForm({
                 Jumlah barang dijual
               </FormLabel>
               <FormControl>
-                <Input placeholder="5" type="number" {...field} />
+                <Input
+                  placeholder="5"
+                  type="number"
+                  {...field}
+                  min={0}
+                  inputMode="numeric"
+                  max={10000}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
