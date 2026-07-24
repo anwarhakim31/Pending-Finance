@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
@@ -31,19 +32,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { LoadingButton } from "@/components/ui/LoadingButton";
+import { Edit2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { DatePicker } from "@/components/ui/date-picker";
+import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
+import useUpdateGroupData from "@/hooks/record/useUpdateGroupData";
+import { Record } from "@/types/model";
+
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { InputCurrcency } from "@/components/ui/InputCurrency";
-import useCreateReceive from "@/hooks/record/useCreateReceive";
-import { formatDateNow } from "@/utils/helpers";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ResponseErrorAxios } from "@/lib/ResponseErrorAxios";
 
-export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
+export function ModalEditReceiveRecord({ data }: { data: Record }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -51,23 +52,18 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <button
-            type="button"
-            disabled={isLoading}
-            className="text-sm p-2 disabled:cursor-not-allowed  disabled:pointer-events-none dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
-          >
-            Terima
+          <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:border-blue-500 dark:border-gray-600">
+            <Edit2 size={14} className="text-blue-700" />
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] h-fit">
-          <DialogHeader className="mb-0">
-            <DialogTitle>Pendapatan Diterima</DialogTitle>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="font-medium">Edit Catatan</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Masukkan jumlah uang yang diterima dan tentukan tanggalnya
+              Edit catatan dengan mengisi jumlah uang diterima
             </DialogDescription>
           </DialogHeader>
-
-          <ProfileForm setOpen={setOpen} />
+          <ProfileForm data={data} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -76,28 +72,19 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <button
-          type="button"
-          disabled={isLoading}
-          className="text-sm p-2 disabled:cursor-not-allowed  disabled:pointer-events-none dark:border-gray-400  dark:hover:border-violet-700 text-violet-700 rounded-xl border-b-2 border-gray-100 hover:border-violet-700 transition-all duration-300 ease-in-out"
-        >
-          Terima
+        <button className="w-7 h-7 border border-gray-300 rounded-full flex-center  hover:border-blue-500 dark:border-gray-600">
+          <Edit2 size={14} className="text-blue-700" />
         </button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="text-left mb-4">
-          <DrawerTitle className=" font-medium mb-0">
-            Pendapatan Diterima
-          </DrawerTitle>
-
+        <DrawerDescription></DrawerDescription>
+        <DrawerHeader>
+          <DrawerTitle className=" font-medium mb-0">Edit Catatan</DrawerTitle>
           <DrawerDescription className="text-xs text-muted-foreground">
-            Masukkan jumlah uang yang diterima dan tentukan tanggalnya
+            Edit catatan dengan mengisi jumlah uang diterima
           </DrawerDescription>
         </DrawerHeader>
-        <DrawerContent className="h-fit">
-          <ProfileForm className="px-4" setOpen={setOpen} />
-        </DrawerContent>
-
+        <ProfileForm className="px-4" data={data} setOpen={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Batal</Button>
@@ -110,39 +97,36 @@ export function ModalRecordReceive({ isLoading }: { isLoading: boolean }) {
 
 function ProfileForm({
   className,
+  data,
   setOpen,
 }: {
   className?: string;
+  data: Record;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const form = useForm<{
-    date: Date | null;
-    total: number | undefined;
+    total: number;
+    _id: string;
   }>({
     defaultValues: {
-      date: formatDateNow() || null,
-      total: 0,
+      _id: data._id || "",
+      total: Number(data?.total) || 0,
     },
   });
-  const [autoClose, setAutoClose] = React.useState(true);
   const query = useQueryClient();
-  const { mutate, isPending } = useCreateReceive();
 
-  const onSubmit = (value: {
-    date: Date | null;
-    total: number | undefined;
-  }) => {
-    mutate(value, {
-      onSuccess: (res) => {
+  const { mutate, isPending } = useUpdateGroupData();
+
+  const onSubmit = (data: Record) => {
+    mutate(data, {
+      onSuccess: (data) => {
         query.invalidateQueries({ queryKey: ["dashboard"] });
-
-        toast.success(res.message);
-        if (autoClose) {
-          setOpen(false);
-        }
+        query.invalidateQueries({ queryKey: ["groupData"] });
+        toast.success(data.message);
+        setOpen(false);
       },
       onError: (error) => {
-        ResponseErrorAxios(error);
+        ResponseErrorAxios(error as AxiosError);
       },
     });
   };
@@ -153,20 +137,6 @@ function ProfileForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-6", className)}
       >
-        <FormField
-          control={form.control}
-          name="date"
-          rules={{ required: "Tanngal tidak boleh kosong." }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="font-normal block w-fit">Tanggal</FormLabel>
-              <FormControl className="flex-col">
-                <DatePicker field={field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="total"
@@ -206,20 +176,8 @@ function ProfileForm({
             </FormItem>
           )}
         />
-        <div className="flex items-center space-x-2 my-4">
-          <Checkbox
-            id="terms"
-            checked={autoClose}
-            onCheckedChange={() => setAutoClose((value) => !value)}
-          />
-          <label
-            htmlFor="terms"
-            className="text-xs text-gray-700 font-normal mt-0.5 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Tutup otomatis saat selesai menyimpan
-          </label>
-        </div>
-        <LoadingButton loading={isPending} className="mt-2 py-5" type="submit">
+
+        <LoadingButton loading={isPending} className="py-5" type="submit">
           Simpan
         </LoadingButton>
       </form>

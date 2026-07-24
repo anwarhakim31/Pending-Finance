@@ -43,7 +43,7 @@ import { Record } from "@/types/model";
 import { Input } from "@/components/ui/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
-export function ModalEditRecord({ data }: { data: Record }) {
+export function ModalEditIncomeRecord({ data }: { data: Record }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 

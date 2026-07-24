@@ -1,20 +1,23 @@
 "use client";
 import { formatDateId } from "@/utils/helpers";
 import useFetchGroupData from "@/hooks/record/useFetchGroupData";
-import { Boxes, CircleDollarSign, Copy } from "lucide-react";
+import { CircleDollarSign, Copy } from "lucide-react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/Loader";
 import { Skeleton } from "@/components/ui/skeleton";
 import AnimateCounter from "@/components/ui/animate-counter";
-import { ModalDeleteRecord } from "./ModalDeleteRecord";
+// import { ModalDeleteRecord } from "./ModalDeleteRecord";
 import RecordListView from "./RecordListView";
 import { Record } from "@/types/model";
 import Image from "next/image";
 import wa from "@/assets/wa.svg";
 import { recordTexMap } from "@/utils/mapping";
 import { useSession } from "next-auth/react";
+import { ModalIncomeRecord } from "./ModalIncomeRecord";
+import { ModalReceiveRecord } from "./ModalReceiveRecord";
+import { ModalDeleteRecord } from "./ModalDeleteRecord";
 
 const MainRecordView = ({ id }: { id: string }) => {
   const session = useSession();
@@ -117,26 +120,29 @@ const MainRecordView = ({ id }: { id: string }) => {
           </div>
           <div className="relative z-10 p-2 flex items-center gap-2 ">
             <div className="flex-shrink-0 h-7 w-7 flex-center bg-white rounded-full ">
-              <Boxes
+              <CircleDollarSign
                 size={18}
                 strokeWidth={1.5}
-                className="text-white fill-orange-300"
+                className="text-green-500"
               />
             </div>
             <div>
               <h5 className="text-[10px] xs:text-xs sm:text-sm text-white">
-                Total Barang Dijual
+                Total Diterima
               </h5>
               <p className="text-sm sm:text-lg font-medium text-white">
                 <AnimateCounter
-                  value={data?.data?.totalProduct || 0}
-                  type="number"
+                  value={data?.data?.totalReceive || 0}
+                  type="currency"
                 />
               </p>
             </div>
           </div>
         </div>
-
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <ModalReceiveRecord isLoading={isLoading} date={data?.data?.date} />
+          <ModalIncomeRecord isLoading={isLoading} date={data?.data?.date} />
+        </div>
         {isLoading ? <Loader /> : <RecordListView data={data} />}
       </section>
     </main>

@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function DatePickerWithRange({
   className,
@@ -23,8 +24,22 @@ export function DatePickerWithRange({
   date: DateRange | undefined;
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
 }) {
+  const route = useRouter();
+  const searchParams = useSearchParams();
+
   const handleSelect = (range: DateRange | undefined) => {
     setDate(range);
+    if (range) {
+      if (!range.from || !range.to) return;
+
+      const startDate = format(range.from as Date, "yyyy-MM-dd");
+      const endDate = format(range.to as Date, "yyyy-MM-dd");
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("from", startDate);
+      params.set("to", endDate);
+      route.replace(`?${params.toString()}`);
+    }
   };
 
   return (

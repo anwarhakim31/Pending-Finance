@@ -30,7 +30,7 @@ export const formatToday = (date: Date = new Date()) => {
   return { startOfDayUTC, endOfDayUTC };
 };
 
-export const formatDateId = (date: string) => {
+export const formatDateId = (date: string | Date) => {
   const utcDate = new Date(date);
   return utcDate.toLocaleDateString("id-ID", {
     timeZone: "UTC",

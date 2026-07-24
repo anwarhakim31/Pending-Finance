@@ -10,21 +10,44 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  params: { params: { id: string } }
+  params: { params: { id: string } },
 ) {
   await connectDB();
   const token = await verifyToken(req);
   try {
     if (token && typeof token === "object" && "id" in token) {
-      const recordId = params.params.id;
+      const groupid = params.params.id;
 
-      const record = await GroupRecord.findById(recordId).populate("records");
+      const record = await GroupRecord.findById(groupid).populate("records");
 
-      const totalIncome = record?.records.reduce(
-        (total: number, record: RecordType) => total + (record.total || 0),
-        0
+      const first = new Date(record?.date.setHours(0, 0, 0, 0));
+      const last = new Date(record?.date.setHours(23, 59, 59, 999));
+
+      const list = await Record.find({
+        userId: token.id as string,
+        date: {
+          $gte: new Date(first).toISOString(),
+          $lte: new Date(last).toISOString(),
+        },
+        type: {
+          $in: ["income", "receive"],
+        },
+      }).sort({ createdAt: -1 });
+
+      const totals = list?.reduce(
+        (total: { income: number; receive: number }, record: RecordType) => {
+          if (record.type === "income") {
+            total.income += record.total || 0;
+          }
+
+          if (record.type === "receive") {
+            total.receive += record.total || 0;
+          }
+
+          return total;
+        },
+        { income: 0, receive: 0 },
       );
-      const totalProduct = record?.records.length;
 
       if (!record) {
         return ResponseError("Data tidak ditemukan", 400);
@@ -35,9 +58,10 @@ export async function GET(
         success: true,
         message: "Berhasil mendapatakan data.",
         data: {
-          totalIncome: totalIncome,
-          totalProduct,
-          record: record.records,
+          totalIncome: totals?.income || 0,
+          totalReceive: totals?.receive || 0,
+
+          record: list,
           date: record.date,
         },
       });
@@ -52,43 +76,55 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  params: { params: { id: string } }
+  params: { params: { id: string } },
 ) {
   await connectDB();
   const token = await verifyToken(req);
   try {
     const recordId = params.params.id;
-    const { quantity, product: productName } = await req.json();
+    const { quantity, product: productName, total } = await req.json();
 
     if (token && typeof token === "object" && "id" in token) {
-      const productDB = await Product.findOne({
-        name: productName,
-        userId: token.id,
-      });
+      const record = await Record.findById(recordId);
 
-      if (!productDB) {
-        return ResponseError("Data tidak ditemukan", 400);
+      if (!record) {
+        return ResponseError("Record tidak ditemukan", 400);
       }
 
-      let total = 0;
-
-      if (productDB.discountQuantity && productDB.discountPrice) {
-        const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
-
-        const qtyNotDiscount =
-          quantity - qtyDiscount * productDB.discountQuantity;
-
-        total =
-          qtyNotDiscount * productDB.price +
-          qtyDiscount * productDB.discountPrice;
+      if (record.type === "receive") {
+        await Record.findByIdAndUpdate(recordId, {
+          total: parseInt(total),
+        });
       } else {
-        total = productDB.price * parseInt(quantity);
-      }
+        const productDB = await Product.findOne({
+          name: productName,
+          userId: token.id,
+        });
 
-      await Record.findByIdAndUpdate(recordId, {
-        quantity: parseInt(quantity),
-        total: total,
-      });
+        if (!productDB) {
+          return ResponseError("Data tidak ditemukan", 400);
+        }
+
+        let total = 0;
+
+        if (productDB.discountQuantity && productDB.discountPrice) {
+          const qtyDiscount = Math.floor(quantity / productDB.discountQuantity);
+
+          const qtyNotDiscount =
+            quantity - qtyDiscount * productDB.discountQuantity;
+
+          total =
+            qtyNotDiscount * productDB.price +
+            qtyDiscount * productDB.discountPrice;
+        } else {
+          total = productDB.price * parseInt(quantity);
+        }
+
+        await Record.findByIdAndUpdate(recordId, {
+          quantity: parseInt(quantity),
+          total: total,
+        });
+      }
 
       return NextResponse.json({
         status: 200,
@@ -106,7 +142,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  params: { params: { id: string } }
+  params: { params: { id: string } },
 ) {
   await connectDB();
   const token = await verifyToken(req);

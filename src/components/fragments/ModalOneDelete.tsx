@@ -39,7 +39,8 @@ export function ModalOneDelete({
           type="button"
           title="Hapus "
           onClick={() => setIsOpen(true)}
-          className="w-7 h-7 border border-gray-300 rounded-full flex-center hover:border-red-400   dark:border-gray-600"
+          disabled={isPending}
+          className="w-7 h-7 border border-gray-300 disabled:cursor-not-allowed rounded-full flex-center hover:border-red-400   dark:border-gray-600"
         >
           <Trash size={14} className=" text-red-600 " />
         </button>

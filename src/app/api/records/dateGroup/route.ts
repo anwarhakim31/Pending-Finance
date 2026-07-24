@@ -17,13 +17,13 @@ export async function GET(req: NextRequest) {
     const firstDayOfPreviousMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() - 1,
-      1
+      1,
     );
 
     const lastDayOfNextMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 2,
-      0
+      0,
     );
 
     if (token && typeof token === "object" && "id" in token) {

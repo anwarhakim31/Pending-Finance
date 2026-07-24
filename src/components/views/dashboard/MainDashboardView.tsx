@@ -7,8 +7,8 @@ import {
   ClockArrowDown,
 } from "lucide-react";
 import React from "react";
-import { ModalRecordIncome } from "./ModalRecordIncome";
-import { ModalRecordReceive } from "./ModalRecordReceive";
+import { ModalIncomeDashboard } from "./ModalIncomeDashboard";
+import { ModalReceiveDashboard } from "./ModalReceiveDashboard";
 
 import DateRecordView from "./DateRecordView";
 import { Meteors } from "@/components/ui/meteor";
@@ -88,12 +88,12 @@ const MainDashboardView = () => {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <ModalRecordReceive isLoading={isLoading} />
-            <ModalRecordIncome isLoading={isLoading} />
+            <ModalReceiveDashboard isLoading={isLoading} />
+            <ModalIncomeDashboard isLoading={isLoading} />
           </div>
           <div className="flex items-center mt-6 mb-4 text-gray-500 gap-2">
             <CalendarPlus size={20} strokeWidth={1.5} />
-            <h3 className="text-xs text-normal  ">Riwayat terakhir ditambah</h3>
+            <h3 className="text-xs text-normal  ">Riwayat Terakhir Dicatat</h3>
           </div>
           <DateRecordView data={data?.resGroup} setMonth={setMonth} />
         </div>

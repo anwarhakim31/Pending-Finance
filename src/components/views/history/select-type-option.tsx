@@ -32,7 +32,7 @@ const SelectTypeOption = ({
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
   const [selectedValue, setSelectedValue] = useState<string | null>(
-    searchParams.get("type") || null,
+    searchParams.get("type") || "semua",
   );
   const router = useRouter();
   const pathname = usePathname();
@@ -84,7 +84,9 @@ const SelectTypeOption = ({
                   }}
                 >
                   {item.value}
-                  <Check className={cn("ml-auto")} />
+                  {item.id === selectedValue && (
+                    <Check className="w-4 h-4 ml-auto" />
+                  )}
                 </CommandItem>
               ))}
             </CommandGroup>

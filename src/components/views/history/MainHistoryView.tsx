@@ -27,10 +27,14 @@ const MainHistoryView = () => {
   const searchParams = useSearchParams();
   const today = new Date();
   const type = searchParams.get("type");
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
 
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
-    to: new Date(),
+    from: from
+      ? new Date(from as string)
+      : new Date(today.getFullYear(), today.getMonth() - 1, 1),
+    to: to ? new Date(to as string) : new Date(),
   });
 
   const { data, isLoading } = useFetchRecordHistory(

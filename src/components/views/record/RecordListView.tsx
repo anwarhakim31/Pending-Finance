@@ -2,36 +2,62 @@ import { ModalOneDelete } from "@/components/fragments/ModalOneDelete";
 import { formatCurrency } from "@/utils/helpers";
 import { Record } from "@/types/model";
 import React from "react";
-import { ModalEditRecord } from "./ModalEditRecord";
+import { ModalEditIncomeRecord } from "./ModalEditIncomeRecord";
+import { ModalEditReceiveRecord } from "./ModalEditReceiveRecord";
 
 const RecordListView = ({ data }: { data: { data: { record: Record[] } } }) => {
   return (
     <div className="grid grid-cols-1  mt-6 gap-2">
-      {data?.data?.record?.map((record: Record) => (
-        <div
-          key={record._id}
-          className="relative rounded-lg border border-gray-300 dark:border-gray-700 p-4 shadow-lg pr-6"
-        >
-          <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
-            {record.product}
-          </h5>
-          <p className="text-xs text-gray-600 mt-2 dark:text-white ">
-            Jumlah Dijual : {record?.quantity} pcs
-          </p>
-          <p className="text-xs text-gray-600 mt-1 dark:text-white ">
-            Total Harga : {formatCurrency((record?.total as number) || 0)}
-          </p>
-          <div className="absolute top-4 right-2 flex gap-2 bg-white dark:bg-black ">
-            <ModalOneDelete
-              id={""}
-              url={`/records/${record._id}`}
-              keys={["groupData", "dashboard"]}
-              pathname={`${data.data.record.length === 1 ? "/dashboard" : ""}`}
-            />
-            <ModalEditRecord data={record} />
+      {data?.data?.record?.map((record: Record) => {
+        return record.type === "income" ? (
+          <div
+            key={record._id}
+            className="relative  rounded-lg border border-gray-300 dark:border-gray-700 p-4 border-l-4 border-l-blue-500 shadow-sm pr-6"
+          >
+            <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
+              {record.product}
+            </h5>
+            <p className="text-xs text-gray-600 mt-2 dark:text-white ">
+              Jumlah Dijual : {record?.quantity} pcs
+            </p>
+            <p className="text-xs text-gray-600 mt-1 dark:text-white ">
+              Total Harga : {formatCurrency((record?.total as number) || 0)}
+            </p>
+            <div className="absolute top-4 right-2 flex gap-2 bg-white dark:bg-black ">
+              <ModalOneDelete
+                id={""}
+                url={`/records/${record._id}`}
+                keys={["groupData", "dashboard"]}
+                pathname={`${data.data.record.length === 1 ? "/dashboard" : ""}`}
+              />
+              <ModalEditIncomeRecord data={record} />
+            </div>
           </div>
-        </div>
-      ))}
+        ) : (
+          <div
+            key={record._id}
+            className="relative  rounded-lg border border-gray-300 dark:border-gray-700 p-4 border-l-4 border-l-green-500 shadow-sm pr-6"
+          >
+            <h5 className="text-sm font-medium line-clamp-1 text-black dark:text-white">
+              {record.product}
+            </h5>
+
+            <p className="text-xs text-gray-600 mt-1 dark:text-white ">
+              Total Pendapatan :{" "}
+              {formatCurrency((record?.total as number) || 0)}
+            </p>
+            <div className="absolute top-4 right-2 flex gap-2 bg-white dark:bg-black ">
+              <ModalOneDelete
+                id={""}
+                url={`/records/${record._id}`}
+                keys={["groupData", "dashboard"]}
+                pathname={`${data.data.record.length === 1 ? "/dashboard" : ""}`}
+              />
+              <ModalEditReceiveRecord data={record} />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
